@@ -1,6 +1,6 @@
 import sys
 from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame
-from util import clear_frame
+from util import clear_frame, exit_program
 from window import create_main_screen
 from force_operations import calcular_resultante, desenhar_resultante
 from force import Force
@@ -24,7 +24,7 @@ def exercise_1_ui(frame, window):
 
     def close_program():
         window.destroy()
-        sys.exit()
+        exit_program()
 
     def get_forces():
         try:

@@ -1,9 +1,9 @@
 from tkinter import Label, Button
-from util import clear_frame, center_window
+from util import clear_frame, center_window, exit_program
 
 def configure_window(window):
     window.title("RESMAT - Atividade 01")
-    center_window(window, 1200, 800)  
+    center_window(window, 1300, 900)  
     window.configure(bg="#2e3b4e")
 
 def create_main_screen(window, frame):
@@ -57,6 +57,6 @@ def create_main_screen(window, frame):
     
     create_button(
         frame, "Sair", 
-        ("Arial", 16, "bold"), "#d32f2f", "white", window.destroy,
+        ("Arial", 16, "bold"), "#d32f2f", "white", exit_program,
         button_width, 2, side="bottom", pady=20
     )
