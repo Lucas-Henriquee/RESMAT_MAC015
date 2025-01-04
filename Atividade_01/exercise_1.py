@@ -1,6 +1,5 @@
-import sys
-from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame, messagebox
-from util import clear_frame, exit_program
+from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame, messagebox, ttk
+from util import clear_frame
 from window import create_main_screen
 from force_operations import calcular_resultante, desenhar_resultante
 from force import Force
@@ -9,11 +8,47 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def exercise_1_ui(frame, window):
     clear_frame(frame)
-    Label(frame, text="Exercício 1: Forças Concorrentes", font=("Arial", 28, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
 
-    Label(frame, text="Quantas forças você deseja inserir?", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack(pady=10)
-    entry_num_forces = Entry(frame, font=("Arial", 22), width=15)
+    Label(
+        frame,
+        text="Exercício 1: Forças Concorrentes",
+        font=("Arial", 28, "bold"),
+        bg="#2e3b4e",
+        fg="#f0f0f0",
+    ).pack(pady=20)
+
+    explanation = (
+        "Este exercício permite calcular a intensidade e a direção resultante de n forças coplanares "
+        "concorrentes em um nó.\n\n"
+        "Existem dois tipos de força que você pode inserir:\n"
+        "- Força por Ângulo e Intensidade: Indique a intensidade (N) e o ângulo (em graus).\n"
+        "- Força por Coordenadas Cartesianas (X, Y): Informe as componentes da força no plano e a intensidade (N) se necessário.\n\n"
+        "Escolha o tipo de força desejado e insira os valores correspondentes."
+    )
+
+    Label(
+        frame,
+        text=explanation,
+        font=("Arial", 16),
+        bg="#2e3b4e",
+        fg="#f0f0f0",
+        wraplength=800,
+        justify="left",
+    ).pack(pady=20)
+
+    Label(
+        frame,
+        text="Quantas forças você deseja inserir?",
+        font=("Arial", 20),
+        bg="#2e3b4e",
+        fg="#f0f0f0",
+    ).pack(pady=10)
+
+    entry_num_forces = Entry(frame, font=("Arial", 20), width=10, justify="center")
     entry_num_forces.pack(pady=15)
+
+    button_frame = Frame(frame, bg="#2e3b4e")
+    button_frame.pack(pady=20)
 
     forces = [] 
 
@@ -23,7 +58,7 @@ def exercise_1_ui(frame, window):
         exercise_1_ui(frame, window)
 
     def confirm_exit_to_main():
-        if messagebox.askyesno("Confirmação", "Deseja voltar ao menu principal? Todas as alterações não salvas serão perdidas."):
+        if messagebox.askyesno("Confirmação", "Deseja voltar ao menu principal? Todas as alterações serão perdidas."):
             create_main_screen(window, frame)
 
     def get_forces():
@@ -34,14 +69,18 @@ def exercise_1_ui(frame, window):
 
             def create_force_frame(force_count):
                 clear_frame(frame)
-                Label(frame, text=f"Força {force_count}", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
+                Label(frame, text=f"Insira os dados da Força {force_count}", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0",).pack(pady=20)
 
-                entry_type = StringVar(value="graus")
+                entry_type = StringVar()
+
+                Label(frame,text="Escolha o tipo de força:", font=("Arial", 18), bg="#2e3b4e", fg="#f0f0f0",).pack(pady=10)
                 frame_entry_type = Frame(frame, bg="#2e3b4e")
-                frame_entry_type.pack(pady=15)
+                frame_entry_type.pack(pady=10)
 
-                Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), variable=entry_type, value="graus", bg="#2e3b4e", fg="#f0f0f0").pack(side="left", padx=20)
-                Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), variable=entry_type, value="coordenadas", bg="#2e3b4e", fg="#f0f0f0").pack(side="left", padx=20)
+                button_angle = Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), variable=entry_type, value="graus",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
+                button_angle.pack(side="left", padx=20)
+                button_coord = Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), variable=entry_type, value="coordenadas",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
+                button_coord.pack(side="left", padx=20)
 
                 Label(frame, text="Intensidade (obrigatório para graus):", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack(pady=10)
                 entry_intensity = Entry(frame, font=("Arial", 22), width=15)
@@ -74,11 +113,18 @@ def exercise_1_ui(frame, window):
                     coord_frame.pack_forget()
                     if entry_type.get() == "graus":
                         angle_frame.pack(pady=10)
-                    else:
+                        button_angle.config(bg="#ffa500", fg="white")
+                        button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
+                    elif entry_type.get() == "coordenadas":
                         coord_frame.pack(pady=10)
+                        button_coord.config(bg="#ffa500", fg="white")
+                        button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+                    else:  
+                        button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+                        button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
 
                 entry_type.trace_add("write", update_input_fields)
-
+                update_input_fields()
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
 
@@ -164,12 +210,14 @@ def exercise_1_ui(frame, window):
 
                 Label(frame, text=f"Editando Força {index + 1}", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
 
-                entry_type = StringVar(value=force.type)
+                entry_type = StringVar()
                 frame_entry_type = Frame(frame, bg="#2e3b4e")
                 frame_entry_type.pack(pady=15)
 
-                Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), variable=entry_type, value="graus", bg="#2e3b4e", fg="#f0f0f0").pack(side="left", padx=20)
-                Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), variable=entry_type, value="coordenadas", bg="#2e3b4e", fg="#f0f0f0").pack(side="left", padx=20)
+                button_angle = Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), variable=entry_type, value="graus",bg="#2e3b4e", fg="white", selectcolor="#2e3b4e",)
+                button_angle.pack(side="left", padx=20)
+                button_coord = Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), variable=entry_type, value="coordenadas",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
+                button_coord.pack(side="left", padx=20)
 
                 Label(frame, text="Nova Intensidade:", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
                 entry_intensity = Entry(frame, font=("Arial", 22), width=15)
@@ -181,13 +229,15 @@ def exercise_1_ui(frame, window):
 
                 if force.type == "graus":
                     angle_frame.pack(pady=10)
+                    button_angle.config(bg="#ffa500") 
                     entry_intensity.delete(0, 'end')
                     entry_intensity.insert(0, str(force.intensity) if force.intensity else "")
 
                     entry_angle.insert(0, str(force.angle))
                 else:
                     coord_frame.pack(pady=10)
-                    entry_intensity.delete(0, 'end') 
+                    entry_intensity.delete(0, 'end')
+                    button_coord.config(bg="#ffa500") 
                     entry_intensity.insert(0, str(force.intensity) if force.intensity else "")
                     entry_x.insert(0, str(force.original_x))
                     entry_y.insert(0, str(force.original_y))
@@ -197,8 +247,16 @@ def exercise_1_ui(frame, window):
                     coord_frame.pack_forget()
                     if entry_type.get() == "graus":
                         angle_frame.pack(pady=10)
-                    else:
+                        button_angle.config(bg="#ffa500", fg="white")
+                        button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
+
+                    elif entry_type.get() == "coordenadas":
                         coord_frame.pack(pady=10)
+                        button_coord.config(bg="#ffa500", fg="white")
+                        button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+                    else:  
+                        button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+                        button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
 
                 entry_type.trace_add("write", update_input_fields)
 
@@ -236,6 +294,6 @@ def exercise_1_ui(frame, window):
 
         except ValueError:
             messagebox.showerror("Erro", "Insira um número válido!")
-
-    Button(frame, text="Iniciar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", command=get_forces, width=20, height=2).pack(pady=20)
-    Button(frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), width=20, height=2).pack(pady=10)
+    
+    Button(button_frame, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=get_forces, width=15, height=2).pack(side="left", padx=20)
+    Button(button_frame, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), width=15, height=2).pack(side="left", padx=20)
