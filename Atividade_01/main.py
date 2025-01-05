@@ -1,5 +1,9 @@
+import sys
+from pathlib import Path
 import tkinter as tk
-from window import configure_window, create_main_screen
+from src.window import configure_window, create_main_screen
+
+sys.dont_write_bytecode = True
 
 window = tk.Tk()
 configure_window(window)
