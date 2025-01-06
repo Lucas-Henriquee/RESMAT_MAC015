@@ -1,10 +1,11 @@
 from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame, messagebox
-from src.util import clear_frame
+from src.util import clear_frame, confirm_exit_to_main
 from src.window import create_main_screen
 from src.force_operations import calculate_resultant, draw_resultant
 from src.force import Force
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
 
 def exercise_1_ui(frame, window):
     clear_frame(frame)
@@ -18,13 +19,15 @@ def exercise_1_ui(frame, window):
     ).pack(pady=20)
 
     explanation = (
-        "Este exercício permite calcular a intensidade e a direção resultante de **N** forças coplanares "
-        "concorrentes em um nó.\n\n"
-        "Existem dois tipos de força que você pode inserir:\n"
-        "- Força por Ângulo e Intensidade: Indique a intensidade (N) e o ângulo (em graus).\n"
-        "- Força por Coordenadas Cartesianas (X, Y): Informe as componentes da força no plano e a intensidade (em N), se necessário.\n\n"
+        "Neste exercício, você poderá calcular a intensidade e a direção resultante de **N** forças "
+        "coplanares concorrentes em um nó.\n\n"
+        "Você pode inserir dois tipos de força:\n"
+        "- Força por Ângulo e Intensidade: Informe a intensidade (em N) e o ângulo (em graus).\n"
+        "- Força por Coordenadas Cartesianas (X, Y): Informe as componentes da força no plano cartesiano "
+        "e, se necessário, a intensidade (em N).\n\n"
         "Escolha o tipo de força desejado e insira os valores correspondentes."
     )
+
 
     Label(
         frame,
@@ -36,32 +39,57 @@ def exercise_1_ui(frame, window):
         justify="left",
     ).pack(pady=20)
 
-    Label(
-        frame,
-        text="Quantas forças você deseja inserir?",
-        font=("Arial", 20),
-        bg="#2e3b4e",
-        fg="#f0f0f0",
-    ).pack(pady=10)
+    try:
+        img = Image.open("assets/exercise_1.png") 
+        img = img.resize((600, 300), Image.Resampling.LANCZOS) 
+        img = ImageTk.PhotoImage(img)
 
-    entry_num_forces = Entry(frame, font=("Arial", 20), width=10, justify="center")
-    entry_num_forces.pack(pady=15)
+        img_label = Label(frame, image=img, bg="#2e3b4e")
+        img_label.image = img  
+        img_label.pack(pady=20)
+    except Exception as e:
+        print(f"Erro ao carregar a imagem: {e}")
 
     button_frame = Frame(frame, bg="#2e3b4e")
     button_frame.pack(pady=20)
 
     forces = [] 
 
+    def insert_num_forces():
+
+        clear_frame(frame)
+
+        Label(
+            frame,
+            text="Exercício 1: Forças Concorrentes",
+            font=("Arial", 28, "bold"),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=20)
+
+        Label(
+            frame,
+            text="Quantas forças você deseja inserir?",
+            font=("Arial", 20),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=10)
+
+        entry_num_forces = Entry(frame, font=("Arial", 20), width=10, justify="center")
+        entry_num_forces.pack(pady=15)
+
+        button_frame_1 = Frame(frame, bg="#2e3b4e")
+        button_frame_1.pack(pady=20)
+
+        Button(button_frame_1, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=lambda: get_forces(entry_num_forces) , cursor="hand2", width=15, height=2).pack(side="left", padx=20)
+        Button(button_frame_1, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: exercise_1_ui(frame, window), cursor="hand2", width=15, height=2).pack(side="left", padx=20)
+
     def reset_state():
         forces.clear()
         clear_frame(frame)
-        exercise_1_ui(frame, window)
+        insert_num_forces()
 
-    def confirm_exit_to_main():
-        if messagebox.askyesno("Confirmação", "Deseja voltar ao menu principal? Todas as alterações serão perdidas."):
-            create_main_screen(window, frame)
-
-    def get_forces():
+    def get_forces(entry_num_forces):
         try:
             num_forces = int(entry_num_forces.get())
             if num_forces <= 0:
@@ -175,13 +203,13 @@ def exercise_1_ui(frame, window):
                 button_frame.pack(side="bottom", pady=20)
 
                 Button(button_frame, text="Visualizar Resultante", font=("Arial", 20, "bold"), bg="#4caf50", cursor="hand2", fg="white", command=result_canvas, width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(window, frame), width=20, height=2).pack(side="left", padx=10)
 
             def edit_force(index):
                 def save_changes():
                     try:
                         new_intensity = float(entry_intensity.get()) if entry_intensity.get() else None
-                        new_type = entry_type.get()
+                        new_type = entry_type.get() or force.type
 
                         if new_type == "graus":
                             if not entry_angle.get():
@@ -288,12 +316,12 @@ def exercise_1_ui(frame, window):
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
                 Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=display_forces, width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(window, frame), width=20, height=2).pack(side="left", padx=10)
 
             create_force_frame(1)
 
         except ValueError:
             messagebox.showerror("Erro", "Insira um número válido!")
     
-    Button(button_frame, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=get_forces, cursor="hand2", width=15, height=2).pack(side="left", padx=20)
+    Button(button_frame, text="Próximo", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=insert_num_forces, cursor="hand2", width=15, height=2).pack(side="left", padx=20)
     Button(button_frame, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), cursor="hand2", width=15, height=2).pack(side="left", padx=20)

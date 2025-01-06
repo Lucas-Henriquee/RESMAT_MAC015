@@ -4,7 +4,7 @@ from .util import clear_frame, center_window, exit_program
 
 def configure_window(window):
     window.title("RESMAT - Atividade 01")
-    center_window(window, 1300, 800)  
+    center_window(window)  
     window.configure(bg="#2e3b4e")
 
 def create_main_screen(window, frame):
