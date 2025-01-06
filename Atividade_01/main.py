@@ -1,5 +1,4 @@
 import sys
-from pathlib import Path
 import tkinter as tk
 from src.window import configure_window, create_main_screen
 

@@ -1,7 +1,7 @@
-from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame, messagebox, ttk
+from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame, messagebox
 from src.util import clear_frame
 from src.window import create_main_screen
-from src.force_operations import calcular_resultante, desenhar_resultante
+from src.force_operations import calculate_resultant, draw_resultant
 from src.force import Force
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -77,9 +77,9 @@ def exercise_1_ui(frame, window):
                 frame_entry_type = Frame(frame, bg="#2e3b4e")
                 frame_entry_type.pack(pady=10)
 
-                button_angle = Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), variable=entry_type, value="graus",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
+                button_angle = Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), cursor="hand2", variable=entry_type, value="graus",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
                 button_angle.pack(side="left", padx=20)
-                button_coord = Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), variable=entry_type, value="coordenadas",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
+                button_coord = Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), cursor="hand2", variable=entry_type, value="coordenadas",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
                 button_coord.pack(side="left", padx=20)
 
                 Label(frame, text="Intensidade (obrigatório para graus):", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack(pady=10)
@@ -128,8 +128,8 @@ def exercise_1_ui(frame, window):
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
 
-                Button(button_frame, text="Calcular Resultante" if force_count == num_forces else "Salvar e Próxima",font=("Arial", 20, "bold"), bg="#4caf50", fg="white", command=lambda: save_and_next(force_count), width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", command=reset_state, width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Calcular Resultante" if force_count == num_forces else "Salvar e Próxima",font=("Arial", 20, "bold"), cursor="hand2", bg="#4caf50", fg="white", command=lambda: save_and_next(force_count), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=reset_state, width=20, height=2).pack(side="left", padx=10)
 
             def create_angle_and_coord_frames():
                 angle_frame = Frame(frame, bg="#2e3b4e")
@@ -151,8 +151,8 @@ def exercise_1_ui(frame, window):
                 clear_frame(frame)
                 if not forces:
                     Label(frame, text="Sem nenhuma força registrada", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-                    Button(frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", command=reset_state, width=20, height=2).pack(pady=10)
-                    Button(frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), width=20, height=2).pack(pady=10)
+                    Button(frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=reset_state, width=20, height=2).pack(pady=10)
+                    Button(frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", cursor="hand2", fg="white", command=lambda: create_main_screen(window, frame), width=20, height=2).pack(pady=10)
                     return
 
                 Label(frame, text="Lista de Forças", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
@@ -162,10 +162,10 @@ def exercise_1_ui(frame, window):
                     button_frame = Frame(frame, bg="#2e3b4e")
                     button_frame.pack(pady=5)
 
-                    Button(button_frame, text="Editar", font=("Arial", 16), bg="#1976d2", fg="white", command=lambda idx=i-1: edit_force(idx)).pack(side="left", padx=10)
-                    Button(button_frame, text="Excluir", font=("Arial", 16), bg="#d32f2f", fg="white", command=lambda idx=i-1: delete_force(idx)).pack(side="left", padx=10)
+                    Button(button_frame, text="Editar", font=("Arial", 16), cursor="hand2", bg="#1976d2", fg="white", command=lambda idx=i-1: edit_force(idx)).pack(side="left", padx=10)
+                    Button(button_frame, text="Excluir", font=("Arial", 16), cursor="hand2", bg="#d32f2f", fg="white", command=lambda idx=i-1: delete_force(idx)).pack(side="left", padx=10)
 
-                result_intensity, result_angle, result_x, result_y = calcular_resultante(forces)
+                result_intensity, result_angle, result_x, result_y = calculate_resultant(forces)
                 result_display = (f"Resultante: Intensidade = {result_intensity:.2f} N, "
                       f"Ângulo = {result_angle:.2f}°, "
                       f"Coordenadas (X, Y) = ({result_x:.2f}, {result_y:.2f})")
@@ -174,8 +174,8 @@ def exercise_1_ui(frame, window):
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
 
-                Button(button_frame, text="Visualizar Resultante", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", command=result_canvas, width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", command=lambda: confirm_exit_to_main(), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Visualizar Resultante", font=("Arial", 20, "bold"), bg="#4caf50", cursor="hand2", fg="white", command=result_canvas, width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(), width=20, height=2).pack(side="left", padx=10)
 
             def edit_force(index):
                 def save_changes():
@@ -214,9 +214,9 @@ def exercise_1_ui(frame, window):
                 frame_entry_type = Frame(frame, bg="#2e3b4e")
                 frame_entry_type.pack(pady=15)
 
-                button_angle = Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), variable=entry_type, value="graus",bg="#2e3b4e", fg="white", selectcolor="#2e3b4e",)
+                button_angle = Radiobutton(frame_entry_type, text="Ângulo (graus)", font=("Arial", 20), cursor="hand2", variable=entry_type, value="graus",bg="#2e3b4e", fg="white", selectcolor="#2e3b4e",)
                 button_angle.pack(side="left", padx=20)
-                button_coord = Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), variable=entry_type, value="coordenadas",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
+                button_coord = Radiobutton(frame_entry_type, text="Coordenadas (X, Y)", font=("Arial", 20), cursor="hand2", variable=entry_type, value="coordenadas",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
                 button_coord.pack(side="left", padx=20)
 
                 Label(frame, text="Nova Intensidade:", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
@@ -263,8 +263,8 @@ def exercise_1_ui(frame, window):
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
 
-                Button(button_frame, text="Salvar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", command=save_changes).pack(side="left", padx=20)
-                Button(button_frame, text="Cancelar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", command=display_forces).pack(side="left", padx=20)
+                Button(button_frame, text="Salvar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=save_changes).pack(side="left", padx=20)
+                Button(button_frame, text="Cancelar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=display_forces).pack(side="left", padx=20)
 
 
             def delete_force(index):
@@ -276,10 +276,10 @@ def exercise_1_ui(frame, window):
 
                 Label(frame, text="Força Resultante", font=("Arial", 28, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
 
-                result_intensity, result_angle, result_x, result_y = calcular_resultante(forces)
+                result_intensity, result_angle, result_x, result_y = calculate_resultant(forces)
 
                 fig, ax = plt.subplots(figsize=(6, 6))
-                desenhar_resultante(forces, ax)
+                draw_resultant(forces, ax)
 
                 canvas = FigureCanvasTkAgg(fig, master=frame)
                 canvas.draw()
@@ -287,13 +287,13 @@ def exercise_1_ui(frame, window):
 
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
-                Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", command=display_forces, width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", command=lambda: confirm_exit_to_main(), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=display_forces, width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(), width=20, height=2).pack(side="left", padx=10)
 
             create_force_frame(1)
 
         except ValueError:
             messagebox.showerror("Erro", "Insira um número válido!")
     
-    Button(button_frame, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=get_forces, width=15, height=2).pack(side="left", padx=20)
-    Button(button_frame, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), width=15, height=2).pack(side="left", padx=20)
+    Button(button_frame, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=get_forces, cursor="hand2", width=15, height=2).pack(side="left", padx=20)
+    Button(button_frame, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), cursor="hand2", width=15, height=2).pack(side="left", padx=20)

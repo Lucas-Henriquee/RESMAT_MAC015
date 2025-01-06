@@ -1,7 +1,7 @@
 import math
 import matplotlib.pyplot as plt
 
-def calcular_resultante(forces):
+def calculate_resultant(forces):
 
     result_x = sum(force.x for force in forces)
     result_y = sum(force.y for force in forces)
@@ -14,8 +14,8 @@ def calcular_resultante(forces):
 
     return result_intensity, result_angle, result_x, result_y
 
-def desenhar_resultante(forces, ax):
-    result_intensity, result_angle, result_x, result_y = calcular_resultante(forces)
+def draw_resultant(forces, ax):
+    result_intensity, result_angle, result_x, result_y = calculate_resultant(forces)
 
     ax.axhline(0, color='black', linewidth=0.5)
     ax.axvline(0, color='black', linewidth=0.5)
