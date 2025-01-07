@@ -16,7 +16,6 @@ def exercise_3_ui(frame, window):
             fg="#f0f0f0",
         ).pack(pady=20)
 
-
         explanation1 = (
             "Neste exercício, você realizará a Análise e o Cálculo de Treliças Planas Isostáticas. "
             "O objetivo é configurar corretamente os parâmetros de uma treliça isostática, fornecendo informações como:\n\n"
@@ -26,7 +25,6 @@ def exercise_3_ui(frame, window):
             "- Apoios: Os tipos e localizações de restrições na estrutura.\n\n"
             "A análise correta dos dados permitirá determinar os esforços internos das barras e a estabilidade da treliça."
         )
-
 
         Label(
             frame,
@@ -39,7 +37,7 @@ def exercise_3_ui(frame, window):
         ).pack(pady=20)
 
         try:
-            img = Image.open("assets/exercise_2.png") 
+            img = Image.open("assets/exercise_3.png") 
             img = img.resize((600, 300), Image.Resampling.LANCZOS) 
             img = ImageTk.PhotoImage(img)
 
@@ -48,7 +46,6 @@ def exercise_3_ui(frame, window):
             img_label.pack(pady=20)
         except Exception as e:
             print(f"Erro ao carregar a imagem: {e}")
-
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)
@@ -75,7 +72,6 @@ def exercise_3_ui(frame, window):
             width=15,
             height=2,
         ).pack(side = "right", padx=20)
-
 
     def start_2():
         clear_frame(frame)
@@ -123,7 +119,7 @@ def exercise_3_ui(frame, window):
         button_frame.pack(pady=20)
 
         Button(button_frame,
-            text="Próximo",
+            text="Iniciar",
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",

@@ -28,7 +28,6 @@ def exercise_1_ui(frame, window):
         "Escolha o tipo de força desejado e insira os valores correspondentes."
     )
 
-
     Label(
         frame,
         text=explanation,
@@ -43,10 +42,10 @@ def exercise_1_ui(frame, window):
         img = Image.open("assets/exercise_1.png") 
         img = img.resize((600, 300), Image.Resampling.LANCZOS) 
         img = ImageTk.PhotoImage(img)
-
         img_label = Label(frame, image=img, bg="#2e3b4e")
         img_label.image = img  
         img_label.pack(pady=20)
+        
     except Exception as e:
         print(f"Erro ao carregar a imagem: {e}")
 
