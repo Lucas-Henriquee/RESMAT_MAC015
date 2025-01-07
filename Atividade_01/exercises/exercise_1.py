@@ -22,7 +22,7 @@ def exercise_1_ui(frame, window):
         "Neste exercício, você poderá calcular a intensidade e a direção resultante de **N** forças "
         "coplanares concorrentes em um nó.\n\n"
         "Você pode inserir dois tipos de força:\n"
-        "- Força por Ângulo e Intensidade: Informe a intensidade (em N) e o ângulo (em graus).\n"
+        "- Força por Ângulo: Informe a intensidade (em N) e o ângulo (em graus).\n"
         "- Força por Coordenadas Cartesianas (X, Y): Informe as componentes da força no plano cartesiano "
         "e, se necessário, a intensidade (em N).\n\n"
         "Escolha o tipo de força desejado e insira os valores correspondentes."
