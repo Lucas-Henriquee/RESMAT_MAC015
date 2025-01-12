@@ -212,6 +212,17 @@ def exercise_2_ui(frame, window):
     def info_apoio(length, support_type):
         clear_frame(frame)
 
+        if support_type != "engastada" and support_type != "biapoiada":
+            start_3()
+            messagebox.showerror("Erro", "Selecione um tipo de apoio válido")
+            return
+
+        try:
+            length = float(length)
+        except ValueError:
+            start_3()
+            messagebox.showerror("Erro", "Insira um valor válido para o comprimento da viga")
+
         Label(
             frame,
             text="Exercício 2: Análise de Carregamento em Viga",
@@ -261,11 +272,11 @@ def exercise_2_ui(frame, window):
             entry_support = Entry(frame, font=("Arial", 16), width=15)
             entry_support.pack(pady=20)
         else:
-            Label(frame, text="Posição do apoio 1 (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
+            Label(frame, text="Posição do apoio de segundo gênero (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
             entry_support1 = Entry(frame, font=("Arial", 16), width=15)
             entry_support1.pack(pady=20)
 
-            Label(frame, text="Posição do apoio 2 (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
+            Label(frame, text="Posição do apoio de primeiro gênero (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
             entry_support2 = Entry(frame, font=("Arial", 16), width=15)
             entry_support2.pack(pady=20)
         
@@ -279,7 +290,7 @@ def exercise_2_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: info_forcas(length, support_type, entry_support.get() if support_type == "engastada" else [entry_support1.get(), entry_support2.get()]),
+            command=lambda: info_forcas(length, support_type, [entry_support.get()] if support_type == "engastada" else [entry_support1.get(), entry_support2.get()]),
             cursor="hand2",
             width=15,
             height=2,
@@ -299,6 +310,28 @@ def exercise_2_ui(frame, window):
 
     def info_forcas(lenght, support_type, supports):
         clear_frame(frame)
+
+        try:
+            if(support_type == "engastada"):
+                supports[0] = float(supports[0])
+                if (supports[0] == 0 or supports[0] == lenght):
+                    pass
+                else:
+                    info_apoio(lenght, support_type)
+                    messagebox.showerror("Erro", "Apoio engastado deve estar em uma extremidade da viga")
+                    return
+            else:
+                supports[0] = float(supports[0])
+                supports[1] = float(supports[1])
+                if(supports[0] == supports[1] or supports[0] < 0 or supports[1] > lenght or supports[0] > lenght or supports[1] < 0):
+                    info_apoio(lenght, support_type)
+                    messagebox.showerror("Erro", "Apoios biapoiados devem estar em pontos diferentes e entre 0 e L")
+                    return
+        except ValueError:
+            info_apoio(lenght, support_type)
+            messagebox.showerror("Erro", "Insira valores válidos para os apoios")
+
+        forces = []
 
         Label(
             frame,
@@ -327,7 +360,6 @@ def exercise_2_ui(frame, window):
         def update_input_fields(*args):
             frame_forca_pontual.pack_forget()
             frame_forca_funcao.pack_forget()
-            print(entry_type.get())
             if(entry_type.get() == "pontual"):
                 frame_forca_pontual.pack(pady=20)
             elif(entry_type.get() == "funcao"):
@@ -363,6 +395,29 @@ def exercise_2_ui(frame, window):
             ).pack(pady=20)
             entry_position = Entry(frame_forca_pontual, font=("Arial", 16), width=15)
             entry_position.pack(pady=20)
+            add_button = Button(
+                frame_forca_pontual,
+                text="Adicionar Força",
+                font=("Arial", 18, "bold"),
+                bg="#4caf50",
+                fg="white",
+                command = lambda: clean_entrys_and_add_force(),
+                cursor="hand2",
+                width=15,
+                height=2,
+            )
+            add_button.pack(pady=20)
+
+            def clean_entrys_and_add_force(*args):
+                try:
+                    intensity = float(entry_force.get())
+                    position = float(entry_position.get())
+                    entry_force.delete(0, 'end')
+                    entry_position.delete(0, 'end')
+                    forces.append((intensity, position))
+                except ValueError:
+                    messagebox.showerror("Erro", "Insira valores válidos para a força e a posição")  
+
             frame_forca_funcao = Frame(frame, bg="#2e3b4e")
             explanation_force = (
                 "Escreva a função que descreve a força em função de x: \n\n"
@@ -378,6 +433,18 @@ def exercise_2_ui(frame, window):
                 fg="#f0f0f0",
                 justify="center",
             ).pack(pady=20)
+            verify_button = Button(
+                frame_forca_funcao,
+                text="Analisar Função",
+                font=("Arial", 18, "bold"),
+                bg="#4caf50",
+                fg="white",
+                command = lambda: analisar_funcao(),
+                cursor="hand2",
+                width=15,
+                height=2,
+            )
+            verify_button.pack(side="bottom",pady=20)
             entry_force_function = Entry(frame_forca_funcao, font=("Arial", 16), width=15)
             entry_force_function.pack(pady=20)
             return frame_forca_pontual, frame_forca_funcao, entry_force, entry_position, entry_force_function
@@ -397,50 +464,43 @@ def exercise_2_ui(frame, window):
         def analisar_funcao_por_partes(func_por_partes, var):
             x = sp.Symbol(var)
             soma_forcas = 0
-            soma_momentos = 0
+            calcular_x_barra = 0
             for funcao, intervalo in func_por_partes:
                 forca = sp.integrate(funcao, (x, intervalo[0], intervalo[1]))
-                momento = sp.integrate(funcao * x, (x, intervalo[0], intervalo[1]))/sp.integrate(funcao, (x, intervalo[0], intervalo[1]))
+                informacao = sp.integrate(funcao * x, (x, intervalo[0], intervalo[1]))
                 soma_forcas += forca
-                soma_momentos += momento
+                calcular_x_barra += informacao
+            x_barra = calcular_x_barra / soma_forcas
+            forces.append((soma_forcas, x_barra))
         
+        def analisar_funcao_unica(funcao, var):
+            x = sp.Symbol(var)
+            forca = sp.integrate(funcao, x)
+            informacao = sp.integrate(funcao * x, x)
+            x_barra = informacao / forca
+            forces.append((forca, x_barra))
 
         def analisar_funcao(event=None):
-            entrada = entry_force.get().strip()  # Obter texto do Entry
+            entrada = entry_force_function.get().strip()  # Obter texto do Entry
             try:
                 # Processar a entrada com sympy
+                #{100*x, (0,3); 300, (3,5); 400, (5,10)}
+                #{x**2, (-oo, 0; x, (0, oo)}
                 if "{" in entrada and "}" in entrada:
                     # Função por partes (usando uma notação específica)
                     partes = entrada[1:-1].split(";")
                     func_por_partes = []
                     for parte in partes:
-                        funcao, intervalo = parte.split(",")
+                        funcao, intervalo = parte.split(",", 1)
                         funcao = sp.sympify(funcao.strip())
                         intervalo = intervalo.strip()
                         intervalo = eval(intervalo)  # Convertendo para tuple
                         func_por_partes.append((funcao, intervalo))
-
-                    resultados = analisar_funcao_por_partes(func_por_partes, 'x')
-
-                    # Mostrar os resultados
-                    texto_resultados = "Análise de Funções Definidas por Partes:\n"
-                    for resultado in resultados:
-                        texto_resultados += f"\nFunção no intervalo {resultado['Intervalo']}:\n"
-                        for chave, valor in resultado.items():
-                            if chave != "Intervalo":
-                                texto_resultados += f"  {chave}: {valor}\n"
-
+                    analisar_funcao_por_partes(func_por_partes, 'x')
                 else:
                     # Função única
                     funcao = sp.sympify(entrada)
-                    resultados = analisar_funcao_unica(funcao, 'x')
-                    texto_resultados = "Análise da Função:\n"
-                    for chave, valor in resultados.items():
-                        texto_resultados += f"{chave}: {valor}\n"
-
-                # Mostrar os resultados em uma MessageBox
-                messagebox.showinfo("Resultados", texto_resultados)
-
+                    analisar_funcao_unica(funcao, 'x')
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao processar a função:\n{e}")
 
@@ -449,11 +509,11 @@ def exercise_2_ui(frame, window):
 
         Button(
             button_frame,
-            text="Próximo",
+            text=("Calculos de apoio"),
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: None,
+            command=lambda: calculate_support_relations(lenght, support_type, supports, forces),
             cursor="hand2",
             width=15,
             height=2,
@@ -470,5 +530,35 @@ def exercise_2_ui(frame, window):
             width=15,
             height=2,
         ).pack(side = "right", padx=20)
+
+    def calculate_resultant(lenght, support_type, supports, forces):
+        if(support_type == "engastada"):
+            sum_forces_x = 0
+            sum_forces_y = 0
+            sum_moments = 0
+            for force in forces:
+                # Calculo do momento
+                moment = force[0] * (supports[0] - force[1]) #Positivo se antihorário
+                sum_moments += moment
+                sum_forces_y += force[0]
+            messagebox.showinfo("Resultados", f"Reações de apoio: F1_x = 0, F1_y = {sum_forces_y}, momento = {sum_moments}")
+        else:
+            sum_forces_y = 0
+            sum_moments = 0
+            for force in forces:
+                # Calculo do momento
+                moment = force[0] * (supports[0] - force[1]) #Positivo se antihorário
+                sum_moments += moment
+                sum_forces_y += force[0]
+            F1_x = sp.Symbol('F1_x')
+            F1_y = sp.Symbol('F1_y')
+            F2 = sp.Symbol('F2')
+            system = [F2 * (supports[1] - supports[0]) + sum_moments, F1_y + F2 - sum_forces_y, F1_x]
+            solution = sp.solve(system, (F1_x, F1_y, F2))
+            print(solution)
+            messagebox.showinfo("Resultados", f"Reações de apoio: \nF1_x = {solution.get(F1_x)}, \nF1_y = {solution.get(F1_y)}, \nF2 = {solution.get(F2)}")                 
+    
+    def calculate_support_relations(lenght, support_type, supports, forces):
+                calculate_resultant(lenght, support_type, supports, forces)            
 
     start_1()
