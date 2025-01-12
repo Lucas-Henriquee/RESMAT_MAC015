@@ -1,5 +1,4 @@
-import sys
-from tkinter import messagebox
+from imports.all_imports import *
 
 def clear_frame(frame):
     for widget in frame.winfo_children():

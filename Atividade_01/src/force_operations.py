@@ -1,5 +1,4 @@
-import math
-import matplotlib.pyplot as plt
+from imports.all_imports import *
 
 def calculate_resultant(forces):
 

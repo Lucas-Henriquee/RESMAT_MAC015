@@ -1,13 +1,10 @@
-from tkinter import Label, Entry, Button, StringVar, Radiobutton, Frame, messagebox
+from imports.all_imports import *
 from src.util import clear_frame, confirm_exit_to_main
 from src.window import create_main_screen
 from src.force_operations import calculate_resultant, draw_resultant
 from src.force import Force
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from PIL import Image, ImageTk
 
-def exercise_1_ui(frame, window):
+def exercise_1_ui(frame, window):   
     clear_frame(frame)
 
     Label(
@@ -80,8 +77,8 @@ def exercise_1_ui(frame, window):
         button_frame_1 = Frame(frame, bg="#2e3b4e")
         button_frame_1.pack(pady=20)
 
-        Button(button_frame_1, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=lambda: get_forces(entry_num_forces) , cursor="hand2", width=15, height=2).pack(side="left", padx=20)
-        Button(button_frame_1, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: exercise_1_ui(frame, window), cursor="hand2", width=15, height=2).pack(side="left", padx=20)
+        Button(button_frame_1, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=lambda: get_forces(entry_num_forces) , cursor="hand2", width=15, height=1).pack(side="left", padx=20)
+        Button(button_frame_1, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: exercise_1_ui(frame, window), cursor="hand2", width=15, height=1).pack(side="left", padx=20)
 
     def reset_state():
         forces.clear()

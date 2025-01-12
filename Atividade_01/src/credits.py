@@ -1,4 +1,4 @@
-from tkinter import Label, Button
+from imports.all_imports import *
 from .util import clear_frame
 
 def credits_ui(frame, window):

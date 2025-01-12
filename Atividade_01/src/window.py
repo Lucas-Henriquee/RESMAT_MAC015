@@ -1,4 +1,4 @@
-from tkinter import Label, Button
+from imports.all_imports import * 
 from .util import clear_frame, center_window, exit_program
 from .credits import credits_ui
 

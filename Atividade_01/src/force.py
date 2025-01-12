@@ -1,4 +1,4 @@
-import math
+from imports.all_imports import *
 
 class Force:
     def __init__(self, intensity=None, force_type="graus", angle_or_coordinates=None):
