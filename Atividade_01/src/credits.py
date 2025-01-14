@@ -62,7 +62,7 @@ def credits_ui(frame, window):
         frame,
         text=(
             "- Imagem 1 (Exercício 1): Retirada do enunciado fornecido pelo professor.\n"
-            "- Imagem 2 (Exercício 2): COLOCAR IMAGEM NO EXERCÍCIO 2\n"
+            "- Imagem 2 (Exercício 2): Retiradas da Internet.\n"
             "- Imagem 3 (Exercício 3): Extraída do livro Mecânica e Resistência dos Materiais de Hibbeler."
         ),
         font=("Arial", 16),

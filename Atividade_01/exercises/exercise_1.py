@@ -107,7 +107,7 @@ def exercise_1_ui(frame, window):
                 button_coord.pack(side="left", padx=20)
 
                 Label(frame, text="Intensidade (obrigatório para graus):", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack(pady=10)
-                entry_intensity = Entry(frame, font=("Arial", 22), width=15)
+                entry_intensity = Entry(frame, font=("Arial", 22), width=15, justify="center")
                 entry_intensity.pack(pady=10)
 
                 angle_frame, coord_frame, entry_angle, entry_x, entry_y = create_angle_and_coord_frames()

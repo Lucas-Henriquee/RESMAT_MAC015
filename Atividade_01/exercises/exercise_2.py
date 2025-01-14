@@ -1,7 +1,7 @@
 from imports.all_imports import *
 from src.window import create_main_screen
 from src.force_operations import calculate_resultant
-from src.util import clear_frame
+from src.util import clear_frame, confirm_exit_to_main
 
 def exercise_2_ui(frame, window):
 
@@ -17,13 +17,12 @@ def exercise_2_ui(frame, window):
         ).pack(pady=20)
 
         explanation1 = (
-            "A "
-            "B\n\n"
-            "C\n"
-            "D\n"
-            "E\n"
-            "F\n\n"
-            "G"
+            "Este exercício aborda a análise de vigas apoiadas. Existem dois tipos principais de vigas que você pode "
+            "encontrar:\n\n"
+            "Vigas Biapoiadas:\n"
+            "- Contêm dois apoios: um apoio fixo (de primeiro gênero) e um apoio móvel (de segundo gênero).\n\n"
+            "Vigas Engastadas:\n"
+            "- Possuem um engaste em uma extremidade, que restringe todas as translações e rotações.\n\n"
         )
 
         Label(
@@ -34,12 +33,43 @@ def exercise_2_ui(frame, window):
             fg="#f0f0f0",
             wraplength=800,
             justify="left",
-        ).pack(pady=20)
+        ).pack(pady=16)
+
+        image_frame = Frame(frame, bg="#2e3b4e")
+        image_frame.pack(pady=20)
+
+        try:
+            img1 = Image.open("assets/exercise_2.1.png")
+            img1 = img1.resize((400, 180), Image.Resampling.LANCZOS)
+            img1 = ImageTk.PhotoImage(img1)
+
+            img2 = Image.open("assets/exercise_2.2.png")
+            img2 = img2.resize((400, 180), Image.Resampling.LANCZOS)
+            img2 = ImageTk.PhotoImage(img2)
+
+            img_label1 = Label(image_frame, image=img1, bg="#2e3b4e")
+            img_label1.image = img1
+            img_label1.pack(side="left", padx=20)
+
+            img_label2 = Label(image_frame, image=img2, bg="#2e3b4e")
+            img_label2.image = img2
+            img_label2.pack(side="left", padx=20) 
+
+        except Exception as e:
+            print(f"Erro ao carregar a imagem: {e}")
+            Label(
+                frame,
+                text="Erro ao carregar as imagens. Verifique os arquivos!",
+                font=("Arial", 16),
+                bg="#2e3b4e",
+                fg="red",
+            ).pack(pady=20)
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)
 
-        Button(button_frame,
+        Button(
+            button_frame,
             text="Próximo",
             font=("Arial", 18, "bold"),
             bg="#4caf50",
@@ -48,7 +78,7 @@ def exercise_2_ui(frame, window):
             cursor="hand2",
             width=15,
             height=2,
-        ).pack(side = "left", padx=20)
+        ).pack(side="left", padx=20)
 
         Button(
             button_frame,
@@ -60,9 +90,14 @@ def exercise_2_ui(frame, window):
             cursor="hand2",
             width=15,
             height=2,
-        ).pack(side = "right", padx=20)
+        ).pack(side="right", padx=20)
+
+    def reset_all():
+        global forces  
+        forces = []  
 
     def start_2():
+        reset_all()
         clear_frame(frame)
 
         Label(
@@ -143,25 +178,27 @@ def exercise_2_ui(frame, window):
             fg="#f0f0f0",
         ).pack(pady=20)
 
+        frame_lenght = Frame(frame, bg="#2e3b4e")
+        frame_lenght.pack(pady=10)
+
         explanation_lenght = (
             "Preencha o tamanho da viga em metros.\n\n"
-            "Largura (m): \n\n"
+            "Largura (m): "
         )
-        
+
         Label(
-            frame,
+            frame_lenght,
             text=explanation_lenght,
             font=("Arial", 16),
             bg="#2e3b4e",
             fg="#f0f0f0",
             justify="center",
-        ).pack(pady=20)
-        entry_lenght = Entry(frame, font=("Arial", 16), width=15)
-        entry_lenght.pack(pady=20)
+        ).pack(pady=5)
 
-        explanation_support_type = (
-            "Tipo de Apoio:\n\n"
-        )
+        entry_lenght = Entry(frame_lenght, font=("Arial", 16), width=15, justify="center")
+        entry_lenght.pack(pady=5)
+
+        explanation_support_type = "\n\nTipo de Apoio:"
         Label(
             frame,
             text=explanation_support_type,
@@ -176,15 +213,54 @@ def exercise_2_ui(frame, window):
         frame_entry_type = Frame(frame, bg="#2e3b4e")
         frame_entry_type.pack(pady=10)
 
-        button_angle = Radiobutton(frame_entry_type, text="engastada", font=("Arial", 20), cursor="hand2", variable=entry_type, value="engastada",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
+        button_angle = Radiobutton(
+            frame_entry_type, 
+            text="engastada", 
+            font=("Arial", 20), 
+            cursor="hand2", 
+            variable=entry_type, 
+            value="engastada",
+            bg="#2e3b4e", 
+            fg="white", 
+            selectcolor="#2e3b4e", 
+            command=lambda: update_support_type("engastada")
+        )
         button_angle.pack(side="left", padx=20)
-        button_coord = Radiobutton(frame_entry_type, text="biapoiada", font=("Arial", 20), cursor="hand2", variable=entry_type, value="biapoiada",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
+
+        button_coord = Radiobutton(
+            frame_entry_type, 
+            text="biapoiada", 
+            font=("Arial", 20), 
+            cursor="hand2", 
+            variable=entry_type, 
+            value="biapoiada",
+            bg="#2e3b4e", 
+            fg="#f0f0f0", 
+            selectcolor="#2e3b4e", 
+            command=lambda: update_support_type("biapoiada")
+        )
         button_coord.pack(side="left", padx=20)
+
+        def update_support_type(support_type):
+            entry_type.set(support_type)
+            if support_type == "engastada":
+                button_angle.config(bg="#ffa500", fg="white")
+                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
+            elif support_type == "biapoiada":
+                button_coord.config(bg="#ffa500", fg="white")
+                button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+            else:
+                button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
+        
+        frame_gap = Frame(frame, bg="#2e3b4e")
+        frame_gap.pack(pady=20)
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)
 
-        Button(button_frame,
+        Button(
+            button_frame,
             text="Próximo",
             font=("Arial", 18, "bold"),
             bg="#4caf50",
@@ -193,7 +269,7 @@ def exercise_2_ui(frame, window):
             cursor="hand2",
             width=15,
             height=2,
-        ).pack(side = "left", padx=20)
+        ).pack(side="left", padx=20)
 
         Button(
             button_frame,
@@ -205,7 +281,7 @@ def exercise_2_ui(frame, window):
             cursor="hand2",
             width=15,
             height=2,
-        ).pack(side = "right", padx=20)
+        ).pack(side="right", padx=20)
 
     def info_apoio(length, support_type):
         clear_frame(frame)
@@ -220,6 +296,7 @@ def exercise_2_ui(frame, window):
         except ValueError:
             start_3()
             messagebox.showerror("Erro", "Insira um valor válido para o comprimento da viga")
+            return
 
         Label(
             frame,
@@ -237,7 +314,7 @@ def exercise_2_ui(frame, window):
         Label(
             frame,
             text=explanation_position,
-            font=("Arial", 16),
+            font=("Arial", 18),
             bg="#2e3b4e",
             fg="#f0f0f0",
             wraplength=800,
@@ -246,12 +323,12 @@ def exercise_2_ui(frame, window):
 
         if(support_type == "engastada"):
             explanation_support = (
-                "O engaste da viga deve estar em uma extremidade, então insira ou 0 "
+                "O engaste da viga deve estar em uma extremidade, então insira ou 0\n "
                 "ou o valor de L para o apoio\n\n"
             )
         else:
             explanation_support = (
-                "A viga é biapoiada, então insira valores entre 0 e L para os apoios\n\n"
+                "A viga é biapoiada, então insira valores entre 0 e L para os apoios\n"
                 "Lembre-se que os apoios devem estar em pontos diferentes\n\n"
             )
         
@@ -267,17 +344,20 @@ def exercise_2_ui(frame, window):
 
         if(support_type == "engastada"):
             Label(frame, text="Posição do apoio (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-            entry_support = Entry(frame, font=("Arial", 16), width=15)
-            entry_support.pack(pady=20)
+            entry_support = Entry(frame, font=("Arial", 16), width=15, justify="center")
+            entry_support.pack(pady=5)
         else:
             Label(frame, text="Posição do apoio de segundo gênero (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-            entry_support1 = Entry(frame, font=("Arial", 16), width=15)
-            entry_support1.pack(pady=20)
+            entry_support1 = Entry(frame, font=("Arial", 16), width=15, justify="center")
+            entry_support1.pack(pady=5)
 
             Label(frame, text="Posição do apoio de primeiro gênero (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-            entry_support2 = Entry(frame, font=("Arial", 16), width=15)
-            entry_support2.pack(pady=20)
+            entry_support2 = Entry(frame, font=("Arial", 16), width=15, justify="center")
+            entry_support2.pack(pady=5)
         
+
+        frame_gap = Frame(frame, bg="#2e3b4e")
+        frame_gap.pack(pady=25)
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)
@@ -300,7 +380,7 @@ def exercise_2_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: start_3(),
+            command=lambda: start_2(),
             cursor="hand2",
             width=15,
             height=2,
@@ -360,14 +440,20 @@ def exercise_2_ui(frame, window):
             frame_forca_funcao.pack_forget()
             if(entry_type.get() == "pontual"):
                 frame_forca_pontual.pack(pady=20)
+                button_angle.config(bg="#ffa500", fg="white")
+                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
             elif(entry_type.get() == "funcao"):
                 frame_forca_funcao.pack(pady=20)
+                button_angle.config(bg="#2e3b4e", fg="white")
+                button_coord.config(bg="#ffa500", fg="#f0f0f0")
             else:
-                pass
+                button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
+                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
+
         def create_func_and_pontual_frames():
             frame_forca_pontual = Frame(frame, bg="#2e3b4e")
             explanation_force = (
-                    "Força Pontual (N): \n\n"
+                    "Força Pontual (N):"
             )
             Label(
                 frame_forca_pontual,
@@ -377,11 +463,11 @@ def exercise_2_ui(frame, window):
                 fg="#f0f0f0",
                 justify="center",
             ).pack(pady=20)
-            entry_force = Entry(frame_forca_pontual, font=("Arial", 16), width=15)
+            entry_force = Entry(frame_forca_pontual, font=("Arial", 16), width=15, justify="center")
             entry_force.pack(pady=20)
 
             explanation_position = (
-                "Posição da força (m): \n\n"
+                "Posição da força (m):"
             )
             Label(
                 frame_forca_pontual,
@@ -391,7 +477,7 @@ def exercise_2_ui(frame, window):
                 fg="#f0f0f0",
                 justify="center",
             ).pack(pady=20)
-            entry_position = Entry(frame_forca_pontual, font=("Arial", 16), width=15)
+            entry_position = Entry(frame_forca_pontual, font=("Arial", 16), width=15, justify="center")
             entry_position.pack(pady=20)
             add_button = Button(
                 frame_forca_pontual,
@@ -413,6 +499,7 @@ def exercise_2_ui(frame, window):
                     entry_force.delete(0, 'end')
                     entry_position.delete(0, 'end')
                     forces.append((intensity, position))
+                    messagebox.showinfo("Força Adicionada", f"Força de {intensity} N na posição {position} m foi adicionada com sucesso!")
                 except ValueError:
                     messagebox.showerror("Erro", "Insira valores válidos para a força e a posição")  
 
@@ -421,7 +508,7 @@ def exercise_2_ui(frame, window):
                 "Escreva a função que descreve a força em função de x: \n\n"
                 "Para funções por partes, use a seguinte notação: {f(x), (a, b); g(x), (c, d); ...}\n\n"
                 "Onde f(x) é a função, (a, b) é o intervalo de x onde a função é válida\n\n"
-                "Exemplo: {x**2, (0, 2); 2*x, (2, 4)}\n\n"
+                "Exemplo: {x**2, (0, 2); 2*x, (2, 4)}"
             )
             Label(
                 frame_forca_funcao,
@@ -443,7 +530,7 @@ def exercise_2_ui(frame, window):
                 height=2,
             )
             verify_button.pack(side="bottom",pady=20)
-            entry_force_function = Entry(frame_forca_funcao, font=("Arial", 16), width=15)
+            entry_force_function = Entry(frame_forca_funcao, font=("Arial", 16), width=15, justify="center")
             entry_force_function.pack(pady=20)
             return frame_forca_pontual, frame_forca_funcao, entry_force, entry_position, entry_force_function
 
@@ -451,9 +538,9 @@ def exercise_2_ui(frame, window):
         frame_entry_type = Frame(frame, bg="#2e3b4e")
         frame_entry_type.pack(pady=10)
 
-        button_angle = Radiobutton(frame_entry_type, text="pontual", font=("Arial", 20), cursor="hand2", variable=entry_type, value="pontual",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
+        button_angle = Radiobutton(frame_entry_type, text="Pontual", font=("Arial", 20), cursor="hand2", variable=entry_type, value="pontual",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
         button_angle.pack(side="left", padx=20)
-        button_coord = Radiobutton(frame_entry_type, text="função", font=("Arial", 20), cursor="hand2", variable=entry_type, value="funcao",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
+        button_coord = Radiobutton(frame_entry_type, text="Função", font=("Arial", 20), cursor="hand2", variable=entry_type, value="funcao",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
         button_coord.pack(side="left", padx=20)
 
         entry_type.trace_add("write", update_input_fields)
@@ -494,7 +581,9 @@ def exercise_2_ui(frame, window):
                         intervalo = intervalo.strip()
                         intervalo = eval(intervalo)  # Convertendo para tuple
                         func_por_partes.append((funcao, intervalo))
+                    messagebox.showinfo("Verificada", f"Função foi verificada com sucesso!")
                     analisar_funcao_por_partes(func_por_partes, 'x')
+                    
                 else:
                     # Função única
                     funcao = sp.sympify(entrada)
@@ -507,7 +596,7 @@ def exercise_2_ui(frame, window):
 
         Button(
             button_frame,
-            text=("Calculos de apoio"),
+            text=("Calcular Resultado"),
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
@@ -523,40 +612,114 @@ def exercise_2_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: info_apoio(lenght, support_type),
+            command=lambda: start_2(),
             cursor="hand2",
             width=15,
             height=2,
         ).pack(side = "right", padx=20)
 
-    def calculate_resultant(lenght, support_type, supports, forces):
-        if(support_type == "engastada"):
-            sum_forces_x = 0
+    def display_results(solution):
+        clear_frame(frame)
+
+        solution = {str(key): value for key, value in solution.items()}
+        
+        def format_value(value):
+            try:
+                return f"{float(value):.2f}"
+            except (ValueError, TypeError):
+                return "N/A"
+
+        results_text = (
+            "Reações de Apoio:\n\n"
+            f"F1_x = {format_value(solution.get('F1_x'))}\n"
+            f"F1_y = {format_value(solution.get('F1_y'))}\n"
+            f"F2 = {format_value(solution.get('F2'))}\n"
+        )
+
+        Label(
+            frame,
+            text="Resultados do Cálculo",
+            font=("Arial", 26, "bold"),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=20)
+
+        result_label = Label(
+            frame,
+            text=results_text,
+            font=("Courier", 18),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            justify="left",
+            anchor="w",
+        )
+        result_label.pack(pady=20, padx=20)
+
+        button_frame = Frame(frame, bg="#2e3b4e")
+        button_frame.pack(pady=20)
+
+        Button(
+            button_frame,
+            text="Menu Principal",
+            font=("Arial", 20, "bold"),
+            bg="#d32f2f",
+            fg="white",
+            command=lambda: confirm_exit_to_main(window, frame),
+            cursor="hand2",
+            width=20,
+            height=2,
+        ).pack(side="bottom", padx=20)
+
+
+    def calculate_resultant(length, support_type, supports, forces):
+
+        if support_type == "engastada":
             sum_forces_y = 0
             sum_moments = 0
+
             for force in forces:
-                # Calculo do momento
-                moment = force[0] * (supports[0] - force[1]) #Positivo se antihorário
+                moment = force[0] * (supports[0] - force[1])  # Positivo se antihorário
                 sum_moments += moment
                 sum_forces_y += force[0]
-            messagebox.showinfo("Resultados", f"Reações de apoio: F1_x = 0, F1_y = {sum_forces_y}, momento = {sum_moments}")
-        else:
+
+            results = {
+                'F1_x': 0.0,
+                'F1_y': sum_forces_y,
+                'F2': sum_moments,  # Momento como resultado adicional
+            }
+            display_results(results)
+
+        else:  # Caso biapoiado
             sum_forces_y = 0
             sum_moments = 0
+
             for force in forces:
-                # Calculo do momento
-                moment = force[0] * (supports[0] - force[1]) #Positivo se antihorário
+                moment = force[0] * (force[1] - supports[0])  # Distância do ponto de aplicação ao apoio fixo
                 sum_moments += moment
                 sum_forces_y += force[0]
+
+            # Definindo variáveis para o sistema
             F1_x = sp.Symbol('F1_x')
             F1_y = sp.Symbol('F1_y')
             F2 = sp.Symbol('F2')
-            system = [F2 * (supports[1] - supports[0]) + sum_moments, F1_y + F2 - sum_forces_y, F1_x]
+
+            # Resolver o sistema de equações
+            system = [
+                F1_y * (supports[1] - supports[0]) - sum_moments,  # Momento em torno do apoio fixo
+                F1_y + F2 - sum_forces_y,  # Equilíbrio vertical
+                F1_x,  # Equilíbrio horizontal (F1_x = 0 para este caso)
+            ]
+
             solution = sp.solve(system, (F1_x, F1_y, F2))
-            print(solution)
-            messagebox.showinfo("Resultados", f"Reações de apoio: \nF1_x = {solution.get(F1_x)}, \nF1_y = {solution.get(F1_y)}, \nF2 = {solution.get(F2)}")                 
-    
+
+            results = {key: float(value) for key, value in solution.items()}
+            display_results(results)
+
     def calculate_support_relations(lenght, support_type, supports, forces):
-                calculate_resultant(lenght, support_type, supports, forces)            
+        try:
+            calculate_resultant(lenght, support_type, supports, forces)
+        except Exception as e:
+            print(f"Erro em calculate_support_relations: {e}")
+            messagebox.showerror("Erro", f"Erro ao calcular os apoios: {e}")
 
     start_1()
