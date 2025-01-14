@@ -189,6 +189,7 @@ def exercise_3_ui(frame, window):
                 raise ValueError("Coordenadas X e Y não podem estar vazias.")
             x, y = float(x), float(y)
             node_manager.add_node(x, y)
+            messagebox.showinfo("Adiconado!", f"Nó {chr(64 + nodes_count)} adicionado com sucesso!")
             if nodes_count == num_nodes:
                 add_bars()
             else:
@@ -391,6 +392,8 @@ def exercise_3_ui(frame, window):
             bar_manager.add_bar(start_node, end_node)
             num_bar = 2 * len(node_manager.nodes) - 3
 
+            messagebox.showinfo("Adicionado!", f"Barra {bar_count} adicionada com sucesso!")
+
             if bar_count == num_bar:
                 add_supports()
             else:
@@ -467,8 +470,7 @@ def exercise_3_ui(frame, window):
             frame,
             text="Como estamos trabalhando em treliças planas isostáticas, você pode escolher entre:\n"
              "- 3 apoios de 1º Gênero\n"
-             "- 1 apoio de 1º Gênero e 1 apoio de 2º Gênero\n"
-             "Evite sobrepor apoios no mesmo nó.",
+             "- 1 apoio de 1º Gênero e 1 apoio de 2º Gênero",
             font=("Arial", 18),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -626,7 +628,7 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Quantas carregamentos você deseja inserir?",
+            text="Quantos carregamentos você deseja inserir?",
             font=("Arial", 20),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -687,7 +689,7 @@ def exercise_3_ui(frame, window):
 
         intensity_frame = Frame(frame, bg="#2e3b4e")
         intensity_frame.pack(pady=10)
-        Label(intensity_frame, text="Intensidade:", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
+        Label(intensity_frame, text="Intensidade (em N):", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
         entry_end = Entry(intensity_frame, font=("Arial", 22), width=15, justify="center")
         entry_end.pack()
 
@@ -731,6 +733,8 @@ def exercise_3_ui(frame, window):
             intensity = float(intensity)
             force = Force(intensity=abs(intensity), force_type="graus", angle_or_coordinates=270)
             target_node.add_force(force)
+
+            messagebox.showinfo("Adicionado!", f"Carregamento {force_count} adicionado com sucesso!")
 
             if force_count == num_forces:
                 info()

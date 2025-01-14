@@ -420,7 +420,7 @@ def exercise_2_ui(frame, window):
         ).pack(pady=20)
 
         explanation_forces = (
-            "Insira as informações de carregamento na viga\n\n"
+            "Insira as informações de carregamento na viga. O carregamento pode ser pontual (força concentrada em uma posição) ou distribuído (uma função ao longo do comprimento da viga). \n\n"
         )
 
         Label(

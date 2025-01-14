@@ -158,15 +158,15 @@ def exercise_1_ui(frame, window):
             def create_angle_and_coord_frames():
                 angle_frame = Frame(frame, bg="#2e3b4e")
                 Label(angle_frame, text="Ângulo (graus):", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
-                entry_angle = Entry(angle_frame, font=("Arial", 22), width=15)
+                entry_angle = Entry(angle_frame, font=("Arial", 22), width=15, justify="center")
                 entry_angle.pack()
 
                 coord_frame = Frame(frame, bg="#2e3b4e")
                 Label(coord_frame, text="Componente X:", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
-                entry_x = Entry(coord_frame, font=("Arial", 22), width=15)
+                entry_x = Entry(coord_frame, font=("Arial", 22), width=15, justify="center")
                 entry_x.pack()
                 Label(coord_frame, text="Componente Y:", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
-                entry_y = Entry(coord_frame, font=("Arial", 22), width=15)
+                entry_y = Entry(coord_frame, font=("Arial", 22), width=15, justify="center")
                 entry_y.pack()
 
                 return angle_frame, coord_frame, entry_angle, entry_x, entry_y
@@ -244,10 +244,9 @@ def exercise_1_ui(frame, window):
                 button_coord.pack(side="left", padx=20)
 
                 Label(frame, text="Nova Intensidade:", font=("Arial", 20), bg="#2e3b4e", fg="#f0f0f0").pack()
-                entry_intensity = Entry(frame, font=("Arial", 22), width=15)
+                entry_intensity = Entry(frame, font=("Arial", 22), width=15, justify="center")
                 entry_intensity.insert(0, str(force.intensity) if force.intensity else "")
                 entry_intensity.pack()
-
 
                 angle_frame, coord_frame, entry_angle, entry_x, entry_y = create_angle_and_coord_frames()
 
@@ -289,7 +288,6 @@ def exercise_1_ui(frame, window):
 
                 Button(button_frame, text="Salvar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=save_changes).pack(side="left", padx=20)
                 Button(button_frame, text="Cancelar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=display_forces).pack(side="left", padx=20)
-
 
             def delete_force(index):
                 forces.pop(index)

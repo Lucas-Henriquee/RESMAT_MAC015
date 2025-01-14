@@ -20,8 +20,8 @@ def credits_ui(frame, window):
     Label(
         frame,
         text=(
-            "Esse programa foi desenvolvido pelos alunos Lucas Henrique e Breno Montanha como parte da Atividade 01 da disciplina de Resistência dos Materiais (Turma X) oferecida pela UFJF no segundo período letivo de 2024, sob a orientação do professor Arthur Halack.\n\n"
-            "A Atividade 01 consiste no desenvolvimento de rotinas computacionais para resolver problemas práticos de Engenharia relacionados a forças concorrentes, reações em vigas biapoiadas e análise de treliças planas isostáticas. O objetivo principal é aplicar conceitos teóricos à prática por meio da programação, promovendo o entendimento aprofundado das estruturas estudadas."
+            "Esse programa foi desenvolvido pelos alunos Lucas Henrique e Breno Montanha como parte da Atividade 01 da disciplina de Resistência dos Materiais (Turma X) oferecida pela UFJF no segundo período letivo de 2024, sob a orientação do professor Artur Hallack.\n\n"
+            "A Atividade 01 consiste no desenvolvimento de rotinas computacionais para resolver problemas práticos de Engenharia relacionados a forças concorrentes, reações em vigas apoiadas e análise de treliças planas isostáticas. O objetivo principal é aplicar conceitos teóricos à prática por meio da programação, promovendo o entendimento aprofundado das estruturas estudadas."
         ),
         font=("Arial", 16),
         bg="#2e3b4e",
