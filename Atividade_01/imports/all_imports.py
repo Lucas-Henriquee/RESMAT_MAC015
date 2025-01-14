@@ -13,4 +13,7 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageTk
 
 import sys
-import math
+
+from math import cos, sin, radians, sqrt, atan2, degrees
+import numpy as np
+import sympy as sp

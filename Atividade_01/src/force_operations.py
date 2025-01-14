@@ -5,11 +5,11 @@ def calculate_resultant(forces):
     result_x = sum(force.x for force in forces)
     result_y = sum(force.y for force in forces)
 
-    result_intensity = math.sqrt(result_x**2 + result_y**2)
+    result_intensity = sqrt(result_x**2 + result_y**2)
     if result_intensity == 0:
         result_angle = None
     else:
-        result_angle = math.degrees(math.atan2(result_y, result_x))
+        result_angle = degrees(atan2(result_y, result_x))
 
     return result_intensity, result_angle, result_x, result_y
 

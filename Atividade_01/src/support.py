@@ -19,14 +19,17 @@ class SupportManager:
     def add_support(self, node, support_type):
         if any(support.node == node for support in self.supports):
             raise ValueError(f"Já existe um apoio no nó {node}!")
-        
-        if not self.validate_support_type(support_type):
-            raise ValueError("Tipo de suporte inválido!")
 
-        if not self.check_support_restrictions(support_type):
-            raise ValueError("As restrições de configuração de apoios foram violadas!")
+        if not self.validate_support_type(support_type):
+            raise ValueError("Tipo de suporte inválido! Escolha 1º ou 2º gênero.")
+
+        try:
+            self.check_support_restrictions(support_type)
+        except ValueError as e:
+            raise ValueError(str(e))  
 
         self.supports.append(Support(node, support_type))
+
 
     def clear_supports(self):
         self.supports.clear()
@@ -48,24 +51,22 @@ class SupportManager:
         return False
     
     def check_support_restrictions(self, support_type):
-   
-        support_counts = {1: 0, 2: 0}  
+        support_counts = {1: 0, 2: 0}
         for support in self.supports:
             support_counts[support.support_type] += 1
 
-        if support_type == 1: 
+        if support_type == 1:
             if support_counts[1] >= 3: 
-                return False
-            if support_counts[1] == 1 and support_counts[2] == 1: 
-                return False
-
-        elif support_type == 2:  
-            if support_counts[2] >= 1: 
-                return False
-            if support_counts[1] != 1:  
-                return False
-
+                raise ValueError("Não é permitido mais de 3 apoios de 1º gênero em treliças planas isostáticas.")
+            if support_counts[1] == 1 and support_counts[2] == 1:
+                raise ValueError("A configuração de 1 apoio de 1º gênero e 1 de 2º gênero já foi atingida.")
+        elif support_type == 2:
+            if support_counts[2] >= 1:
+                raise ValueError("Não é permitido mais de 1 apoio de 2º gênero.")
+            if support_counts[1] == 3:
+                raise ValueError("A configuração de 3 apoios de 1º gênero não permite adicionar um de 2º gênero.")
         return True
+
 
     def validate_support_type(self, support_type):
         return support_type in [1, 2] 
@@ -82,14 +83,14 @@ class SupportManager:
             if abs(node.y) < 1:
                 label_offset_y = -0.5
 
-            if support.support_type == 1: 
+            if support.support_type == 2: 
                 fixed_patch = Polygon(
                     [[node.x - 0.15, node.y - 0.2], [node.x + 0.15, node.y - 0.2], [node.x, node.y]], 
                     closed=True, color='red', zorder=3
                 )
                 ax.add_patch(fixed_patch)
         
-            elif support.support_type == 2: 
+            elif support.support_type == 1: 
                 roller_patch = Polygon(
                     [[node.x - 0.15, node.y - 0.2], [node.x + 0.15, node.y - 0.2], [node.x, node.y]], 
                     closed=True, color='green', zorder=3

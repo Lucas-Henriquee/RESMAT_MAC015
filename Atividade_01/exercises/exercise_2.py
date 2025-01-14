@@ -1,9 +1,7 @@
-from tkinter import Label, Button, Entry, Frame, Radiobutton, StringVar, messagebox
+from imports.all_imports import *
 from src.window import create_main_screen
 from src.force_operations import calculate_resultant
 from src.util import clear_frame
-import sympy as sp
-
 
 def exercise_2_ui(frame, window):
 

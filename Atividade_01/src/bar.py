@@ -117,7 +117,8 @@ class BarManager:
                 ax.plot(
                 [start_node.x, end_node.x],
                 [start_node.y, end_node.y],
-                color='black', linewidth=4.5, zorder=2
+                color='black', zorder=2
                 )
+
 
         return x_coords, y_coords

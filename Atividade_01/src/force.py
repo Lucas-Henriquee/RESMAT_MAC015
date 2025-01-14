@@ -21,8 +21,8 @@ class Force:
 
             self.angle = angle_or_coordinates
             self.intensity = intensity if intensity is not None else 0
-            self.x = math.cos(math.radians(self.angle)) * self.intensity
-            self.y = math.sin(math.radians(self.angle)) * self.intensity
+            self.x = cos(radians(self.angle)) * self.intensity
+            self.y = sin(radians(self.angle)) * self.intensity
 
         elif self.type == "coordenadas":
             if angle_or_coordinates is None:
@@ -31,7 +31,7 @@ class Force:
             x, y = angle_or_coordinates
 
             if intensity is not None:
-                magnitude = math.sqrt(x**2 + y**2)
+                magnitude = sqrt(x**2 + y**2)
                 if magnitude != 0:
                     self.x = (x / magnitude) * intensity
                     self.y = (y / magnitude) * intensity
@@ -42,12 +42,11 @@ class Force:
             else:
                 self.x = x
                 self.y = y
-                self.intensity = math.sqrt(x**2 + y**2)
+                self.intensity = sqrt(x**2 + y**2)
 
             self.original_x = x
             self.original_y = y
-
-            self.angle = math.degrees(math.atan2(self.original_y, self.original_x))
+            self.angle = degrees(atan2(self.original_y, self.original_x))
 
         else:
             raise ValueError("Tipo de força inválido. Use 'graus' ou 'coordenadas'.")
