@@ -29,12 +29,13 @@ class Force:
                 raise ValueError("As coordenadas X e Y devem ser fornecidas para forças do tipo 'coordenadas'.")
 
             x, y = angle_or_coordinates
+            magnitude = sqrt(x**2 + y**2)
 
             if intensity is not None:
-                magnitude = sqrt(x**2 + y**2)
                 if magnitude != 0:
-                    self.x = (x / magnitude) * intensity
-                    self.y = (y / magnitude) * intensity
+                    scale = intensity / magnitude
+                    self.x = x * scale
+                    self.y = y * scale
                 else:
                     self.x = 0
                     self.y = 0
@@ -42,7 +43,7 @@ class Force:
             else:
                 self.x = x
                 self.y = y
-                self.intensity = sqrt(x**2 + y**2)
+                self.intensity = magnitude
 
             self.original_x = x
             self.original_y = y

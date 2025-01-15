@@ -529,7 +529,7 @@ def exercise_2_ui(frame, window):
                 width=15,
                 height=2,
             )
-            verify_button.pack(side="bottom",pady=20)
+            verify_button.pack(side="bottom",pady=5)
             entry_force_function = Entry(frame_forca_funcao, font=("Arial", 16), width=15, justify="center")
             entry_force_function.pack(pady=20)
             return frame_forca_pontual, frame_forca_funcao, entry_force, entry_position, entry_force_function
@@ -618,11 +618,64 @@ def exercise_2_ui(frame, window):
             height=2,
         ).pack(side = "right", padx=20)
 
+    def calculate_resultant(length, support_type, supports, forces):
+
+        if support_type == "engastada":
+            sum_forces_x = 0  
+            sum_forces_y = 0
+            sum_moments = 0
+
+            for force in forces:
+                moment = force[0] * (supports[0] - force[1]) 
+                sum_moments += moment
+                sum_forces_y += force[0]
+
+            results = {
+                'F1_x': 0.0, 
+                'F1_y': sum_forces_y, 
+                'M_A': sum_moments,  
+            }
+            display_results(results)
+
+        else:
+            sum_forces_y = 0
+            sum_moments = 0
+
+            for force in forces:
+                moment = force[0] * (force[1] - supports[0])  
+                sum_moments += moment
+                sum_forces_y += force[0]
+
+            F1_x = sp.Symbol('F1_x')
+            F1_y = sp.Symbol('F1_y')
+            F2 = sp.Symbol('F2')
+
+            system = [
+                F2 * (supports[1] - supports[0]) - sum_moments,  
+                F1_y + F2 - sum_forces_y,  
+                F1_x,  
+            ]
+
+            try:
+                solution = sp.solve(system, (F1_x, F1_y, F2))
+            except Exception as e:
+                print(f"Erro ao resolver o sistema: {e}")
+                raise e
+
+            results = {
+                'F1_x': float(solution.get(F1_x, 0)),
+                'F1_y': float(solution.get(F1_y, 0)),
+                'F2': float(solution.get(F2, 0)),
+            }
+
+            display_results(results)
+
+
     def display_results(solution):
         clear_frame(frame)
 
         solution = {str(key): value for key, value in solution.items()}
-        
+
         def format_value(value):
             try:
                 return f"{float(value):.2f}"
@@ -633,7 +686,8 @@ def exercise_2_ui(frame, window):
             "Reações de Apoio:\n\n"
             f"F1_x = {format_value(solution.get('F1_x'))}\n"
             f"F1_y = {format_value(solution.get('F1_y'))}\n"
-            f"F2 = {format_value(solution.get('F2'))}\n"
+            f"F2 = {format_value(solution.get('F2', 0))}\n"  
+            f"Momento (M_A) = {format_value(solution.get('M_A', 0))}\n"  
         )
 
         Label(
@@ -670,50 +724,6 @@ def exercise_2_ui(frame, window):
             height=2,
         ).pack(side="bottom", padx=20)
 
-
-    def calculate_resultant(length, support_type, supports, forces):
-
-        if support_type == "engastada":
-            sum_forces_y = 0
-            sum_moments = 0
-
-            for force in forces:
-                moment = force[0] * (supports[0] - force[1])  # Positivo se antihorário
-                sum_moments += moment
-                sum_forces_y += force[0]
-
-            results = {
-                'F1_x': 0.0,
-                'F1_y': sum_forces_y,
-                'F2': sum_moments,  # Momento como resultado adicional
-            }
-            display_results(results)
-
-        else:  # Caso biapoiado
-            sum_forces_y = 0
-            sum_moments = 0
-
-            for force in forces:
-                moment = force[0] * (force[1] - supports[0])  # Distância do ponto de aplicação ao apoio fixo
-                sum_moments += moment
-                sum_forces_y += force[0]
-
-            # Definindo variáveis para o sistema
-            F1_x = sp.Symbol('F1_x')
-            F1_y = sp.Symbol('F1_y')
-            F2 = sp.Symbol('F2')
-
-            # Resolver o sistema de equações
-            system = [
-                F1_y * (supports[1] - supports[0]) - sum_moments,  # Momento em torno do apoio fixo
-                F1_y + F2 - sum_forces_y,  # Equilíbrio vertical
-                F1_x,  # Equilíbrio horizontal (F1_x = 0 para este caso)
-            ]
-
-            solution = sp.solve(system, (F1_x, F1_y, F2))
-
-            results = {key: float(value) for key, value in solution.items()}
-            display_results(results)
 
     def calculate_support_relations(lenght, support_type, supports, forces):
         try:
