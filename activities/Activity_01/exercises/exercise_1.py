@@ -15,7 +15,7 @@ def exercise_1_ui(frame, window):
     ).pack(pady=20)
 
     explanation = (
-        "Neste exercício, você poderá calcular a intensidade e a direção resultante de **N** forças "
+        "Neste exercício, você poderá calcular a intensidade e a direção resultante de N forças "
         "coplanares concorrentes em um nó.\n\n"
         "Você pode inserir dois tipos de força:\n"
         "- Força por Ângulo: Informe a intensidade (em N) e o ângulo (em graus).\n"
@@ -44,6 +44,13 @@ def exercise_1_ui(frame, window):
         
     except Exception as e:
         print(f"Erro ao carregar a imagem: {e}")
+        Label(
+            frame,
+            text="Erro ao carregar as imagens. Verifique os arquivos!",
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="red",
+        ).pack(pady=20)
 
     button_frame = Frame(frame, bg="#2e3b4e")
     button_frame.pack(pady=20)

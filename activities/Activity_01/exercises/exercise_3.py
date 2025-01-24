@@ -53,6 +53,13 @@ def exercise_3_ui(frame, window):
             img_label.pack(pady=20)
         except Exception as e:
             print(f"Erro ao carregar a imagem: {e}")
+            Label(
+                frame,
+                text="Erro ao carregar as imagens. Verifique os arquivos!",
+                font=("Arial", 16),
+                bg="#2e3b4e",
+                fg="red",
+            ).pack(pady=20)
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)
