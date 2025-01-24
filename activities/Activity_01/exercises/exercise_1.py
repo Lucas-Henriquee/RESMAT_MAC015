@@ -1,8 +1,7 @@
-from imports.all_imports import *
+from src.all_imports import *
 from src.util import clear_frame, confirm_exit_to_main
-from src.window import create_main_screen
-from src.force_operations import calculate_resultant, draw_resultant
-from src.force import Force
+from src.window import create_main_screen_activity_01
+from src.force import Force, calculate_resultant, draw_resultant
 
 def exercise_1_ui(frame, window):   
     clear_frame(frame)
@@ -36,7 +35,7 @@ def exercise_1_ui(frame, window):
     ).pack(pady=20)
 
     try:
-        img = Image.open("assets/exercise_1.png") 
+        img = Image.open("activities/Activity_01/assets/exercise_1.png") 
         img = img.resize((600, 300), Image.Resampling.LANCZOS) 
         img = ImageTk.PhotoImage(img)
         img_label = Label(frame, image=img, bg="#2e3b4e")
@@ -176,7 +175,7 @@ def exercise_1_ui(frame, window):
                 if not forces:
                     Label(frame, text="Sem nenhuma força registrada", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
                     Button(frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=reset_state, width=20, height=2).pack(pady=10)
-                    Button(frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", cursor="hand2", fg="white", command=lambda: create_main_screen(window, frame), width=20, height=2).pack(pady=10)
+                    Button(frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", cursor="hand2", fg="white", command=lambda: create_main_screen_activity_01(window, frame), width=20, height=2).pack(pady=10)
                     return
 
                 Label(frame, text="Lista de Forças", font=("Arial", 24, "bold"), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
@@ -199,7 +198,7 @@ def exercise_1_ui(frame, window):
                 button_frame.pack(side="bottom", pady=20)
 
                 Button(button_frame, text="Visualizar Resultante", font=("Arial", 20, "bold"), bg="#4caf50", cursor="hand2", fg="white", command=result_canvas, width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(window, frame), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(window, frame, 1), width=20, height=2).pack(side="left", padx=10)
 
             def edit_force(index):
                 def save_changes():
@@ -310,7 +309,7 @@ def exercise_1_ui(frame, window):
                 button_frame = Frame(frame, bg="#2e3b4e")
                 button_frame.pack(side="bottom", pady=20)
                 Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#4caf50", fg="white", cursor="hand2", command=display_forces, width=20, height=2).pack(side="left", padx=10)
-                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(window, frame), width=20, height=2).pack(side="left", padx=10)
+                Button(button_frame, text="Menu Principal", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=lambda: confirm_exit_to_main(window, frame, 1), width=20, height=2).pack(side="left", padx=10)
 
             create_force_frame(1)
 
@@ -318,4 +317,4 @@ def exercise_1_ui(frame, window):
             messagebox.showerror("Erro", "Insira um número válido!")
     
     Button(button_frame, text="Próximo", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=insert_num_forces, cursor="hand2", width=15, height=2).pack(side="left", padx=20)
-    Button(button_frame, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen(window, frame), cursor="hand2", width=15, height=2).pack(side="left", padx=20)
+    Button(button_frame, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: create_main_screen_activity_01(window, frame), cursor="hand2", width=15, height=2).pack(side="left", padx=20)

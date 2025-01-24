@@ -1,4 +1,4 @@
-from imports.all_imports import *
+from .all_imports import *
 
 class Bar:
     def __init__(self, name, start_node, end_node):

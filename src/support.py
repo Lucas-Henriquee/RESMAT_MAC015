@@ -1,4 +1,4 @@
-from imports.all_imports import *
+from .all_imports import *
 
 class Support:
     def __init__(self, node, support_type):

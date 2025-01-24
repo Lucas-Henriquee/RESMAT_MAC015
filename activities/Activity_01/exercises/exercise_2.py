@@ -1,6 +1,5 @@
-from imports.all_imports import *
-from src.window import create_main_screen
-from src.force_operations import calculate_resultant
+from src.all_imports import *
+from src.window import create_main_screen_activity_01
 from src.util import clear_frame, confirm_exit_to_main
 
 def exercise_2_ui(frame, window):
@@ -39,11 +38,11 @@ def exercise_2_ui(frame, window):
         image_frame.pack(pady=20)
 
         try:
-            img1 = Image.open("assets/exercise_2.1.png")
+            img1 = Image.open("activities/Activity_01/assets/exercise_2.1.png")
             img1 = img1.resize((400, 180), Image.Resampling.LANCZOS)
             img1 = ImageTk.PhotoImage(img1)
 
-            img2 = Image.open("assets/exercise_2.2.png")
+            img2 = Image.open("activities/Activity_01/assets/exercise_2.2.png")
             img2 = img2.resize((400, 180), Image.Resampling.LANCZOS)
             img2 = ImageTk.PhotoImage(img2)
 
@@ -86,7 +85,7 @@ def exercise_2_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: create_main_screen(window, frame),
+            command=lambda: create_main_screen_activity_01(window, frame),
             cursor="hand2",
             width=15,
             height=2,
@@ -718,7 +717,7 @@ def exercise_2_ui(frame, window):
             font=("Arial", 20, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: confirm_exit_to_main(window, frame),
+            command=lambda: confirm_exit_to_main(window, frame, 1),
             cursor="hand2",
             width=20,
             height=2,

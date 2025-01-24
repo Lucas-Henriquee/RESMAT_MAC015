@@ -1,6 +1,6 @@
-from imports.all_imports import *
+from src.all_imports import *
 from src.util import clear_frame, confirm_exit_to_main
-from src.window import create_main_screen
+from src.window import create_main_screen_activity_01
 from src.node import NodeManager
 from src.support import SupportManager
 from src.bar import BarManager
@@ -44,7 +44,7 @@ def exercise_3_ui(frame, window):
         ).pack(pady=20)
 
         try:
-            img = Image.open("assets/exercise_3.png") 
+            img = Image.open("activities/Activity_01/assets/exercise_3.png") 
             img = img.resize((600, 300), Image.Resampling.LANCZOS) 
             img = ImageTk.PhotoImage(img)
 
@@ -74,7 +74,7 @@ def exercise_3_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: create_main_screen(window, frame),
+            command=lambda: create_main_screen_activity_01(window, frame),
             cursor="hand2",
             width=15,
             height=2,
@@ -867,7 +867,7 @@ def exercise_3_ui(frame, window):
                 bg="#d32f2f",
                 fg="white",
                 cursor="hand2",
-                command= lambda:confirm_exit_to_main(window, frame),
+                command= lambda:confirm_exit_to_main(window, frame, 1),
                 width=20,
                 height=2
             ).pack(side="left", padx=10)

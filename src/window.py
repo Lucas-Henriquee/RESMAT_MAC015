@@ -1,4 +1,4 @@
-from imports.all_imports import * 
+from .all_imports import * 
 from .util import clear_frame, center_window, exit_program
 from .credits import credits_ui
 
@@ -7,12 +7,12 @@ def configure_window(window):
     center_window(window)  
     window.configure(bg="#2e3b4e")
 
-def create_main_screen(window, frame):
+def create_main_screen_activity_01(window, frame):
     clear_frame(frame)
 
-    from exercises.exercise_1 import exercise_1_ui
-    from exercises.exercise_2 import exercise_2_ui
-    from exercises.exercise_3 import exercise_3_ui
+    from activities.Activity_01.exercises.exercise_1 import exercise_1_ui
+    from activities.Activity_01.exercises.exercise_2 import exercise_2_ui
+    from activities.Activity_01.exercises.exercise_3 import exercise_3_ui
 
     def create_label(frame, text, font, bg, fg, pady=None):
         label = Label(frame, text=text, font=font, bg=bg, fg=fg)
@@ -65,3 +65,11 @@ def create_main_screen(window, frame):
         ("Arial", 16, "bold"), "#d32f2f", "white", exit_program,
         button_width, 2, pady=button_spacing
     )
+
+def create_main_screen_activity_02(window, frame):
+    clear_frame(frame)
+    pass
+
+def create_main_screen_activity_03(window, frame):
+    clear_frame(frame)
+    pass

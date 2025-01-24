@@ -1,11 +1,11 @@
-from imports.all_imports import *
+from .all_imports import *
 from .util import clear_frame
 
 def credits_ui(frame, window):
 
     def go_back():
-        from .window import create_main_screen
-        create_main_screen(window, frame)
+        from .window import create_main_screen_activity_01
+        create_main_screen_activity_01(window, frame)
 
     clear_frame(frame)
 

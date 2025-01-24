@@ -1,5 +1,5 @@
-from imports.all_imports import *
-from src.force import Force
+from .all_imports import *
+from .force import Force
 
 class Node:
     def __init__(self, name, x, y):

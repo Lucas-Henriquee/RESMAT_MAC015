@@ -1,4 +1,4 @@
-from imports.all_imports import * 
+from src.all_imports import * 
 from src.window import configure_window, create_main_screen
 from src.util import configure_close_behavior
 

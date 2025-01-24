@@ -1,4 +1,4 @@
-from imports.all_imports import *
+from .all_imports import *
 
 def solve_truss(nodes, bars, supports):
 

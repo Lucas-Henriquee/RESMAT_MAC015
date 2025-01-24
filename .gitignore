@@ -2,5 +2,5 @@
 */build/*
 */dist/*
 **/__pycache__/
-*Atividade_*.spec
-*auto_runner.py
+*Atividades_RESMAT.spec
+auto_runner.py
