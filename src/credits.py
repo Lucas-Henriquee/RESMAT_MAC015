@@ -1,11 +1,36 @@
 from .all_imports import *
 from .util import clear_frame
 
-def credits_ui(frame, window):
+def go_back(frame, window, type):
+    
+    from .window import create_main_screen, create_main_screen_activity_01, create_main_screen_activity_02, create_main_screen_activity_03
 
-    def go_back():
-        from .window import create_main_screen_activity_01
-        create_main_screen_activity_01(window, frame)
+    cases = {
+        0: create_main_screen,
+        1: create_main_screen_activity_01,
+        2: create_main_screen_activity_02,
+        3: create_main_screen_activity_03,
+    }
+
+    case_function = cases.get(type)
+    case_function(window, frame)  
+
+def credits_ui(frame, window, type):
+    clear_frame(frame)
+
+    if type == 1:
+        information_1_ui(frame, window)
+    
+    elif type == 2:
+        information_2_ui(frame, window)
+    
+    elif type == 3:
+        information_3_ui(frame, window)
+    
+    else:
+        credits_ui(frame, window)
+
+def credits_ui(frame, window):
 
     clear_frame(frame)
 
@@ -20,15 +45,57 @@ def credits_ui(frame, window):
     Label(
         frame,
         text=(
-            "Esse programa foi desenvolvido pelos alunos Lucas Henrique e Breno Montanha como parte da Atividade 01 da disciplina de Resistência dos Materiais (Turma X) oferecida pela UFJF no segundo período letivo de 2024, sob a orientação do professor Artur Hallack.\n\n"
-            "A Atividade 01 consiste no desenvolvimento de rotinas computacionais para resolver problemas práticos de Engenharia relacionados a forças concorrentes, reações em vigas apoiadas e análise de treliças planas isostáticas. O objetivo principal é aplicar conceitos teóricos à prática por meio da programação, promovendo o entendimento aprofundado das estruturas estudadas."
+            "Esse programa foi desenvolvido pelos alunos Lucas Henrique e Breno Montanha como proposta de avaliação da disciplina de Resistência dos Materiais (Turma X) "
+            "oferecida pela UFJF no segundo período letivo de 2024, sob a orientação do professor Artur Hallack.\n\n"
+            "O programa foi desenvolvido em Python, utilizando a biblioteca Tkinter para a interface gráfica e o módulo Math para cálculos matemáticos."
         ),
         font=("Arial", 16),
         bg="#2e3b4e",
         fg="#f0f0f0",
         wraplength=800,
-        justify="left"  
+        justify="left"
     ).pack(pady=10)
+
+    Label(
+        frame,
+        text="Atividades do Programa",
+        font=("Arial", 24, "bold"),
+        bg="#2e3b4e",
+        fg="#f0f0f0"
+    ).pack(pady=20)
+
+    Label(
+        frame,
+        text=(
+            "As atividades do programa consistem no desenvolvimento de rotinas computacionais para resolver problemas práticos de engenharia.\n\n"
+            
+            "Atividade 01: Forças concorrentes, reações em vigas apoiadas e análise de treliças planas isostáticas.\n\n"
+            
+            "Atividade 02: Cálculo dos esforços internos (M(x) e V(x)) e representação dos diagramas em vigas isostáticas, além da plotagem da configuração deformada de treliças planas isostáticas com fator de escala adequado."
+        ),
+        font=("Arial", 16),
+        bg="#2e3b4e",
+        fg="#f0f0f0",
+        wraplength=800,
+        justify="left"
+    ).pack(pady=10)
+
+    Button(
+        frame,
+        text="Voltar",
+        font=("Arial", 16, "bold"),
+        bg="#d32f2f",
+        fg="white",
+        command= lambda: go_back(frame, window, 0),
+        cursor="hand2",
+        relief="raised",
+        width=15,
+        height=2
+        ).pack(pady=45)
+
+def information_1_ui(frame, window):
+
+    clear_frame(frame)
 
     Label(
         frame,
@@ -36,7 +103,7 @@ def credits_ui(frame, window):
         font=("Arial", 18, "bold"),
         bg="#2e3b4e",
         fg="#f0f0f0",
-    ).pack(pady=(30, 5))
+        ).pack(pady=(30, 5))
 
     Label(
         frame,
@@ -48,7 +115,7 @@ def credits_ui(frame, window):
         fg="#f0f0f0",
         wraplength=800,
         justify="left"  
-    ).pack(pady=10)
+        ).pack(pady=10)
 
     Label(
         frame,
@@ -56,7 +123,7 @@ def credits_ui(frame, window):
         font=("Arial", 18, "bold"),
         bg="#2e3b4e",
         fg="#f0f0f0",
-    ).pack(pady=(30, 5))
+        ).pack(pady=(30, 5))
 
     Label(
         frame,
@@ -70,17 +137,24 @@ def credits_ui(frame, window):
         fg="#f0f0f0",
         wraplength=800,
         justify="left"  
-    ).pack(pady=10)
-
+        ).pack(pady=10)
+    
     Button(
         frame,
         text="Voltar",
         font=("Arial", 16, "bold"),
         bg="#d32f2f",
         fg="white",
-        command=go_back,
+        command= lambda: go_back(frame, window, 1),
         cursor="hand2",
         relief="raised",
         width=15,
         height=2
-    ).pack(pady=20)
+        ).pack(pady=20)
+
+
+def information_2_ui(frame, window):
+    pass
+
+def information_3_ui(frame, window):
+    pass

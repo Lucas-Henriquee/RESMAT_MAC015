@@ -1,30 +1,83 @@
 from src.all_imports import *
 from src.util import clear_frame, confirm_exit_to_main
-from src.window import create_main_screen_activity_01
+from src.window import create_main_screen_activity_02
 from src.node import NodeManager
 from src.support import SupportManager
 from src.bar import BarManager
 from src.force import Force
 
-def exercise_3_ui(frame, window):
+def exercise_2_ui(frame, window):
 
     node_manager = NodeManager()
     bar_manager = BarManager(node_manager)
     support_manager = SupportManager()
+
+    def start_0():
+        clear_frame(frame)
+
+        Label(
+            frame,
+            text="Exercício 2: Deformacões em Treliças Planas Isostáticas",
+            font=("Arial", 28, "bold"),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=20)
+
+        explanation0 = (
+            "Neste exercício, você realizará a Análise de Deformações em Treliças Planas Isostáticas. "
+            "A base do exercício é dada pelo exercício 3 da Atividade 01. "
+            "Logo você deve configurar a treliça isostática e no final será abordado a questão da deformação.\n\n") 
+        
+        Label(
+            frame,
+            text=explanation0,
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            wraplength=800,
+            justify="left",
+        ).pack(pady=20)
+
+        button_frame = Frame(frame, bg="#2e3b4e")
+        button_frame.pack(pady=20)
+
+        Button(button_frame,
+            text="Próximo",
+            font=("Arial", 18, "bold"),
+            bg="#4caf50",
+            fg="white",
+            command=lambda: start_1(),
+            cursor="hand2",
+            width=15,
+            height=2,
+        ).pack(side = "left", padx=20)
+
+        Button(
+            button_frame,
+            text="Voltar",
+            font=("Arial", 18, "bold"),
+            bg="#d32f2f",
+            fg="white",
+            command=lambda: create_main_screen_activity_02(window, frame),
+            cursor="hand2",
+            width=15,
+            height=2,
+        ).pack(side = "right", padx=20)
+
 
     def start_1():
         clear_frame(frame)
 
         Label(
             frame,
-            text="Exercício 3: Análise de Treliças Planas Isostáticas",
+            text="Exercício 2: Deformacões em Treliças Planas Isostáticas",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
         ).pack(pady=20)
 
         explanation1 = (
-            "Neste exercício, você realizará a Análise e o Cálculo de Treliças Planas Isostáticas. "
+            "Neste exercício, você realizará a Análise e o Cálculo de Treliças Planas Isostáticas e no final a análise da deformação da treliça. "
             "O objetivo é configurar corretamente os parâmetros de uma treliça isostática, fornecendo informações como:\n\n"
             "- Nós: Os pontos que compõem a estrutura.\n"
             "- Barras: Os elementos conectando os nós.\n"
@@ -44,7 +97,7 @@ def exercise_3_ui(frame, window):
         ).pack(pady=20)
 
         try:
-            img = Image.open("activities/Activity_01/assets/exercise_3.png") 
+            img = Image.open("activities/Activity_02/assets/exercise_2.png") 
             img = img.resize((600, 300), Image.Resampling.LANCZOS) 
             img = ImageTk.PhotoImage(img)
 
@@ -81,7 +134,7 @@ def exercise_3_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: create_main_screen_activity_01(window, frame),
+            command=lambda: start_0(),
             cursor="hand2",
             width=15,
             height=2,
@@ -92,7 +145,7 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 3: Análise de Treliças Planas Isostáticas",
+            text="Exercício 2: Deformacões em Treliças Planas Isostáticas",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -116,6 +169,7 @@ def exercise_3_ui(frame, window):
             "   - Apoio fixo (Apoio de 2º Gênero): Bloqueia movimentos em todas as direções, mas permite rotações.\n"
             "   - Engaste (Apoio de 3º Gênero): Restringe totalmente movimentos e rotações.\n\n"
             "4. Definir os carregamentos: Para cada carregamento, especifique o nó onde ele será aplicado e a intensidade\n\n"
+            "5. Calcular a deformação: Após configurar a treliça, você poderá visualizar a estrutura e calcular a deformação das barras."
             )
 
         Label(
@@ -154,7 +208,6 @@ def exercise_3_ui(frame, window):
             height=2,
         ).pack(side = "right", padx=20)
 
-
     def reset_state():
         node_manager.clear_nodes()
         bar_manager.clear_bars()
@@ -167,7 +220,7 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 3: Análise de Treliças Planas Isostáticas",
+            text="Exercício 2: Deformacões em Treliças Planas Isostáticas",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -442,6 +495,40 @@ def exercise_3_ui(frame, window):
             Polygon([[0, 0]], closed=True, color='green', label='Apoio de 1º gênero'),
             Line2D([0], [0], color='orange', lw=2, label='Forças Aplicadas')
         ]
+
+        deformation_threshold = 1e-6
+
+        for bar in bar_manager.bars:
+            start_node = node_manager.get_node(bar.start_node)
+            end_node = node_manager.get_node(bar.end_node)
+
+            if start_node is None or end_node is None:
+                continue  
+
+            x_orig = [start_node.x, end_node.x]
+            y_orig = [start_node.y, end_node.y]
+
+            x_deformed = [start_node.x_deformed, end_node.x_deformed]
+            y_deformed = [start_node.y_deformed, end_node.y_deformed]
+
+            deformation = max(
+                abs(x_deformed[0] - x_orig[0]), abs(x_deformed[1] - x_orig[1]),
+                abs(y_deformed[0] - y_orig[0]), abs(y_deformed[1] - y_orig[1])
+            )
+
+            if deformation > deformation_threshold:
+                perturbation = 0.02  
+                x_deformed_tilted = [(x + perturbation * (-1)**i) for i, x in enumerate(x_deformed)]
+                y_deformed_tilted = [(y + perturbation * (-1)**(i + 1)) for i, y in enumerate(y_deformed)]
+                
+                ax.plot(
+                    x_deformed_tilted, y_deformed_tilted, color='red', linestyle='--', linewidth=1.5,
+                    label='Barra Deformada' if 'Barra Deformada' not in [el.get_label() for el in legend_elements] else ""
+                )
+
+                if 'Barra Deformada' not in [el.get_label() for el in legend_elements]:
+                    legend_elements.append(Line2D([0], [0], color='red', linestyle='--', linewidth=1.5, label='Barra Deformada'))
+
         ax.legend(handles=legend_elements, loc='upper right', fontsize=8)
 
         canvas = FigureCanvasTkAgg(fig, frame)
@@ -464,6 +551,9 @@ def exercise_3_ui(frame, window):
         elif type == "final":
             Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", 
            cursor="hand2", command=calculate_results, width=20, height=2).pack(side="left", padx=10)
+        elif type == "bar_deformed":
+            Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", 
+           cursor="hand2", command=calculate_deformed, width=20, height=2).pack(side="left", padx=10)
         else: 
             Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", 
            cursor="hand2", command=start_2, width=20, height=2).pack(side="left", padx=10)
@@ -580,7 +670,7 @@ def exercise_3_ui(frame, window):
             bg="#4caf50",
             fg="white",
             cursor="hand2",
-            command=lambda: add_force()
+            command=lambda: check_supports()
         ).pack(side="left", padx=10)
 
         Button(
@@ -592,6 +682,17 @@ def exercise_3_ui(frame, window):
             cursor="hand2",
             command=lambda: start_2()
         ).pack(side="left", padx=10)
+
+    def check_supports():
+        support_counts = {1: 0, 2: 0}
+
+        for support in support_manager.supports:
+            support_counts[support.support_type] += 1
+
+        if support_counts[1] == 3 or (support_counts[1] == 1 and support_counts[2] == 1):
+            add_force()
+        else:
+            messagebox.showerror("Erro", "Você precisa inserir 3 apoios de 1º gênero ou 1 de 1º gênero e 1 de 2º gênero antes de avançar.")
 
     def save_support(node, entry_type):
         try:
@@ -605,7 +706,6 @@ def exercise_3_ui(frame, window):
 
         except ValueError as e:
             messagebox.showerror("Erro ao adicionar apoio", str(e))
-
 
     def add_force():
 
@@ -673,7 +773,6 @@ def exercise_3_ui(frame, window):
         Button(button_frame_1, text="Iniciar", font=("Arial", 18, "bold"), bg="#4caf50", fg="white", command=lambda: get_forces(entry_num_forces) , cursor="hand2", width=15, height=1).pack(side="left", padx=20)
         Button(button_frame_1, text="Voltar", font=("Arial", 18, "bold"), bg="#d32f2f", fg="white", command=lambda: start_2(), cursor="hand2", width=15, height=1).pack(side="left", padx=20)
 
-
     def get_forces(entry_num_forces):
         try:
             num_forces = int(entry_num_forces.get())
@@ -728,7 +827,6 @@ def exercise_3_ui(frame, window):
             width=20,
             height=2
         ).pack(side="left", padx=10)
-
 
     def save_force(num_forces, force_count, node_name, intensity):
         try:
@@ -803,10 +901,129 @@ def exercise_3_ui(frame, window):
             height=2
         ).pack(side="left", padx=10)
 
+    def deformed_truss():
+        clear_frame(frame)
+
+        Label(
+            frame,
+            text="Deformação de uma Treliça Plana Isostática",
+            font=("Arial", 24, "bold"),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            wraplength=800,
+            justify="left"
+        ).pack(pady=20)
+
+        Label(
+            frame,
+            text="Escolha na tabela abaixo o valor do módulo de elasticidade E e a área da seção transversal A:",
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            wraplength=800,
+            justify="left"
+        ).pack(pady=20)
+
+        materials = [
+            ("Material", "Módulo de Elasticidade (GPa)", "Área (m²)"),
+            ("Aço Estrutural", "200", "5.0e-4"),
+            ("Alumínio", "69", "4.0e-4"),
+            ("Madeira (Pinus)", "10", "1.0e-3"),
+            ("Madeira (Carvalho)", "12", "1.2e-3"),
+            ("Concreto Armado", "30", "8.0e-4"),
+            ("Titânio", "116", "3.5e-4")
+        ]
+
+        material_text = f"{materials[0][0]:<22}{materials[0][1]:<30}{materials[0][2]:<20}\n"
+        material_text += "-" * 70 + "\n"
+
+        for material, modulus, area in materials[1:]:
+            material_text += f"{material:<32}{modulus:<20}{area:<20}\n"
         
+        material_text += "-" * 70 + "\n"
+
+        material_label = Label(
+            frame,
+            text=material_text,
+            font=("Courier", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            justify="left",
+            anchor="w",
+        )
+        material_label.pack(pady=20)
+
+        Label(
+            frame,
+            text="Digite o valor do módulo de elasticidade (GPa):",
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0"
+        ).pack(pady=10)
+
+        entry_E = Entry(frame, font=("Arial", 18), width=10, justify="center")
+        entry_E.insert(0,"")  
+        entry_E.pack(pady=5)
+
+        Label(
+            frame,
+            text="Digite o valor da área da seção transversal no formato científico (ex: 5.01e-4):",
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0"
+        ).pack(pady=10)
+
+        entry_A = Entry(frame, font=("Arial", 18), width=10, justify="center")
+        entry_A.insert(0, "") 
+        entry_A.pack(pady=5)
+
+        def apply_EA():
+            try:
+                E_value = float(entry_E.get()) * 1e9 
+                A_value = float(eval(entry_A.get())) 
+                
+                if E_value <= 0 or A_value <= 0:
+                    raise ValueError("Os valores de E e A devem ser positivos.")
+                
+                bar_manager.set_elasticity_modulus(E_value)
+                bar_manager.set_cross_sectional_area(float(A_value))
+                
+                messagebox.showinfo("Sucesso!", f"E = {E_value / 1e9:.2f} GPa, A = {A_value:.2e} m² definidos.")
+                calculate_deformed()
+            
+            except ValueError:
+                messagebox.showerror("Erro", "Digite valores válidos para E e A.")
+
+        button_frame = Frame(frame, bg="#2e3b4e")
+        button_frame.pack(pady=20)
+
+        Button(
+            button_frame,
+            text="Aplicar",
+            font=("Arial", 18, "bold"),
+            bg="#4caf50",
+            fg="white",
+            command=apply_EA,
+            cursor="hand2",
+            width=15,
+            height=1,
+        ).pack(side="left", padx=15)
+
+        Button(
+            button_frame,
+            text="Voltar",
+            font=("Arial", 18, "bold"),
+            bg="#d32f2f",
+            fg="white",
+            command=lambda: start_2(),
+            cursor="hand2",
+            width=15,
+            height=1,
+        ).pack(side="left", padx=15)
+
     def calculate_results():
         clear_frame(frame)
-        from src.truss import solve_truss, solve_truss_by_nodes, solve_truss_by_global_stiffness
+        from src.truss import solve_truss
 
         try:
             nodes = node_manager.nodes
@@ -857,12 +1074,12 @@ def exercise_3_ui(frame, window):
 
             Button(
                 button_frame_2,
-                text="Visualizar Estrutura",
+                text="Deformação na Treliça", 
                 font=("Arial", 20, "bold"),
                 cursor="hand2",
                 bg="#4caf50",
                 fg="white",
-                command=lambda: render_drawing("final"),
+                command=lambda: deformed_truss(),
                 width=20,
                 height=2
             ).pack(side="left", padx=10)
@@ -874,7 +1091,7 @@ def exercise_3_ui(frame, window):
                 bg="#d32f2f",
                 fg="white",
                 cursor="hand2",
-                command= lambda:confirm_exit_to_main(window, frame, 1),
+                command= lambda:confirm_exit_to_main(window, frame, 2),
                 width=20,
                 height=2
             ).pack(side="left", padx=10)
@@ -882,4 +1099,101 @@ def exercise_3_ui(frame, window):
         except Exception as e:
             messagebox.showerror("Erro", f"Ocorreu um erro ao calcular os resultados: {e}")
 
-    start_1()
+    def calculate_deformed():
+        clear_frame(frame)
+
+        from src.truss import solve_truss_by_global_stiffness
+
+        nodes = node_manager.nodes
+        bars = bar_manager.bars
+        supports = support_manager.supports
+
+        if bar_manager.E is None:
+            messagebox.showerror("Erro", "Defina um valor para o módulo de elasticidade (E) antes de calcular a deformação.")
+            return
+
+        results, displacements = solve_truss_by_global_stiffness(nodes, bars, supports, bar_manager.E, bar_manager.A)
+        node_manager.apply_displacements(displacements)
+
+        Label(
+            frame,
+            text = f"Análise da Deformação na Treliça (E = {bar_manager.E / 1e9:.0f} GPa)",
+            font=("Arial", 26),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=20)
+
+        results_text = "Nó       X Inicial   Y Inicial   X Deformado   Y Deformado\n"
+        results_text += "-" * 70 + "\n"
+
+        for node in nodes:
+            results_text += f"{node.name:^9}{node.x:^13.3f}{node.y:^12.3f}{node.x_deformed:^15.6f}{node.y_deformed:^12.6f}\n"
+
+        results_text += "-" * 70 + "\n"
+        results_text += "\nVariação no Comprimento das Barras:\n"
+        results_text += "Barra       ΔL (m)      T/C\n"
+        results_text += "-" * 40 + "\n"
+
+        for bar, (bar_name, status, force) in zip(bars, results):
+            start_node = node_manager.get_node(bar.start_node)
+            end_node = node_manager.get_node(bar.end_node)
+
+            L_original = np.sqrt((start_node.x - end_node.x) ** 2 + (start_node.y - end_node.y) ** 2)
+            L_deformed = np.sqrt((start_node.x_deformed - end_node.x_deformed) ** 2 + (start_node.y_deformed - end_node.y_deformed) ** 2)
+            delta_L = L_deformed - L_original
+
+            results_text += f"{bar.name:<10}{delta_L:^12.6f}{status:^5}\n"
+        
+        results_text += "-" * 40 + "\n"
+
+        result_label = Label(
+            frame,
+            text=results_text,
+            font=("Courier", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            justify="center",
+            anchor="center",
+        )
+        result_label.pack(pady=20)
+
+        button_frame = Frame(frame, bg="#2e3b4e")
+        button_frame.pack(pady=20)
+
+        Button(
+            button_frame,
+            text="Alterar E e A",
+            font=("Arial", 18, "bold"),
+            bg="#4caf50",
+            fg="white",
+            cursor="hand2",
+            command=lambda: deformed_truss(),
+            width=15,
+            height=1,
+        ).pack(side="left", padx=20)
+
+        Button(
+            button_frame,
+            text="Visualizar Treliça",
+            font=("Arial", 18, "bold"),
+            bg="#4caf50",
+            fg="white",
+            cursor="hand2",
+            command= lambda:render_drawing("bar_deformed"),
+            width=15,
+            height=1,
+        ).pack(side="left", padx=20)
+
+        Button(
+            button_frame,
+            text="Menu Principal",
+            font=("Arial", 18, "bold"),
+            bg="#d32f2f",
+            fg="white",
+            command=lambda: confirm_exit_to_main(window, frame, 2),
+            cursor="hand2",
+            width=15,
+            height=1,
+        ).pack(side="left", padx=20)
+
+    start_0()

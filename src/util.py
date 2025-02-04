@@ -21,19 +21,33 @@ def confirm_exit_to_main(window, frame, screen):
     from .window import create_main_screen_activity_02
     from .window import create_main_screen_activity_03
     
-    messagebox.askyesno("Confirmação", "Deseja voltar ao menu principal? Todas as alterações serão perdidas.")
+    messagebox.askyesno("Confirmação", "Deseja voltar ao Menu? Todas as alterações serão perdidas.")
 
-    if screen == 1:
-        create_main_screen_activity_01(window, frame)
-    
-    elif screen == 2:
-        create_main_screen_activity_02(window, frame)
+    if(messagebox.askyesno):
+        if screen == 1:
+            create_main_screen_activity_01(window, frame)
+        
+        elif screen == 2:
+            create_main_screen_activity_02(window, frame)
 
-    elif screen == 3:
-        create_main_screen_activity_03(window, frame)
+        elif screen == 3:
+            create_main_screen_activity_03(window, frame)
 
 def configure_close_behavior(window):
     def on_close():
         window.destroy()
 
     window.protocol("WM_DELETE_WINDOW", on_close)
+
+def create_label(frame, text, font, bg, fg, pady=None):
+    label = Label(frame, text=text, font=font, bg=bg, fg=fg)
+    label.pack(pady=pady)
+    return label
+
+def create_button(frame, text, font, bg, fg, command, width, height, pady=None):
+    button = Button(
+        frame, text=text, font=font, bg=bg, fg=fg, command=command,
+        cursor="hand2", relief="raised", width=width, height=height
+    )
+    button.pack(pady=pady)
+    return button

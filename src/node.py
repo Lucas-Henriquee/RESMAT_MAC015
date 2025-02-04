@@ -6,11 +6,19 @@ class Node:
         self.name = name
         self.x = x
         self.y = y
+        self.x_deformed = x  
+        self.y_deformed = y  
         self.forces = []
 
     def update(self, x, y):
         self.x = x
         self.y = y
+        self.x_deformed = x  
+        self.y_deformed = y
+
+    def apply_displacement(self, dx, dy):
+        self.x_deformed = self.x + dx
+        self.y_deformed = self.y + dy
 
     def add_force(self, force):
         if isinstance(force, Force):
@@ -64,6 +72,17 @@ class Node:
                 color='orange', fontsize=9, ha='center', va='center', zorder=6
             )
 
+    def draw_node_label(self, ax):
+        offset_x = 0.15
+        offset_y = 0.15
+        label_x = self.x + offset_x
+        label_y = self.y + offset_y
+
+        ax.text(
+            label_x, label_y, self.name,
+            fontsize=12, color='black', weight='bold',
+            ha='center', va='center', zorder=7
+        )
 
 class NodeManager:
     def __init__(self):
@@ -89,20 +108,32 @@ class NodeManager:
                 return node
         return None
 
+    def apply_displacements(self, displacements):
+        for i, node in enumerate(self.nodes):
+            dx = displacements[2 * i]
+            dy = displacements[2 * i + 1]
+            node.apply_displacement(dx, dy)
+
     def list_nodes(self):
         return [f"{node.name}: ({node.x}, {node.y})" for node in self.nodes]
 
-    def draw_nodes(self, ax):
+    def draw_nodes(self, ax, deformed=False):
         x_coords = []
         y_coords = []
 
         for node in self.nodes:
-            x_coords.append(node.x)
-            y_coords.append(node.y)
-            ax.plot(node.x, node.y, 'o', markersize=10, markeredgecolor='black', markerfacecolor='blue', zorder=3)
-            
-            node.draw_forces(ax, scale_proportional=False, fixed_size=0.5)
+            if deformed:
+                x, y = node.x_deformed, node.y_deformed
+                color = 'red'
+            else:
+                x, y = node.x, node.y
+                color = 'blue'
 
+            x_coords.append(x)
+            y_coords.append(y)
+            ax.plot(x, y, 'o', markersize=10, markeredgecolor='black', markerfacecolor=color, zorder=3)
+            node.draw_forces(ax, scale_proportional=False, fixed_size=0.5)
+            node.draw_node_label(ax)  
 
         return x_coords, y_coords
 

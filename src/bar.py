@@ -15,6 +15,8 @@ class BarManager:
         self.bars = []
         self.counter = 0
         self.node_manager = node_manager
+        self.E = None
+        self.A = None
 
     def generate_bar_name(self):
         return f"B{self.counter + 1}"
@@ -22,6 +24,8 @@ class BarManager:
     def clear_bars(self):
         self.bars.clear()
         self.counter = 0
+        self.E = None
+        self.A = None
 
     def add_bar(self, start_node, end_node):
         if not self.node_manager.get_node(start_node):
@@ -95,6 +99,18 @@ class BarManager:
             ccw(line1_start, line2_start, line2_end) != ccw(line1_end, line2_start, line2_end) and
             ccw(line1_start, line1_end, line2_start) != ccw(line1_start, line1_end, line2_end)
         )
+
+    def set_elasticity_modulus(self, E):
+        if E <= 0:
+            raise ValueError("O módulo de elasticidade deve ser maior que zero.")
+        
+        self.E = E
+
+    def set_cross_sectional_area(self, A):
+        if A <= 0:
+            raise ValueError("A área da seção transversal deve ser maior que zero.")
+        
+        self.A = A
 
     def draw_bars(self, ax):
         x_coords = []
