@@ -78,11 +78,6 @@ class SupportManager:
         for support in self.supports:
             node = node_manager.get_node(support.node)
 
-            if abs(node.x) < 1:
-                label_offset_x = -0.5 if node.x >= 0 else 0.5
-            if abs(node.y) < 1:
-                label_offset_y = -0.5
-
             if support.support_type == 2: 
                 fixed_patch = Polygon(
                     [[node.x - 0.15, node.y - 0.2], [node.x + 0.15, node.y - 0.2], [node.x, node.y]], 

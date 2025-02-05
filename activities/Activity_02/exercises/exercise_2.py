@@ -517,14 +517,21 @@ def exercise_2_ui(frame, window):
             )
 
             if deformation > deformation_threshold:
-                perturbation = 0.02  
-                x_deformed_tilted = [(x + perturbation * (-1)**i) for i, x in enumerate(x_deformed)]
-                y_deformed_tilted = [(y + perturbation * (-1)**(i + 1)) for i, y in enumerate(y_deformed)]
-                
+                scale_factor = 250
+                x_deformed_scaled = [
+                    orig + (deformed - orig) * scale_factor 
+                    for orig, deformed in zip(x_orig, x_deformed)
+                ]
+                y_deformed_scaled = [
+                    orig + (deformed - orig) * scale_factor 
+                    for orig, deformed in zip(y_orig, y_deformed)
+                ]
+
                 ax.plot(
-                    x_deformed_tilted, y_deformed_tilted, color='red', linestyle='--', linewidth=1.5,
+                    x_deformed_scaled, y_deformed_scaled, color='red', linestyle='--', linewidth=1.5,
                     label='Barra Deformada' if 'Barra Deformada' not in [el.get_label() for el in legend_elements] else ""
                 )
+
 
                 if 'Barra Deformada' not in [el.get_label() for el in legend_elements]:
                     legend_elements.append(Line2D([0], [0], color='red', linestyle='--', linewidth=1.5, label='Barra Deformada'))
@@ -1131,7 +1138,7 @@ def exercise_2_ui(frame, window):
 
         results_text += "-" * 70 + "\n"
         results_text += "\nVariação no Comprimento das Barras:\n"
-        results_text += "Barra       ΔL (m)      T/C\n"
+        results_text += "Barra       L (m)      T/C\n"
         results_text += "-" * 40 + "\n"
 
         for bar, (bar_name, status, force) in zip(bars, results):
@@ -1142,7 +1149,7 @@ def exercise_2_ui(frame, window):
             L_deformed = np.sqrt((start_node.x_deformed - end_node.x_deformed) ** 2 + (start_node.y_deformed - end_node.y_deformed) ** 2)
             delta_L = L_deformed - L_original
 
-            results_text += f"{bar.name:<10}{delta_L:^12.6f}{status:^5}\n"
+            results_text += f"{bar_name:<10}{delta_L:^12.6f}{status:^5}\n"
         
         results_text += "-" * 40 + "\n"
 
@@ -1155,7 +1162,18 @@ def exercise_2_ui(frame, window):
             justify="center",
             anchor="center",
         )
+
         result_label.pack(pady=20)
+
+        Label(
+            frame,
+            text=(
+                "Foi utilizada uma escala de 250x no plot da treliça deformada para facilitar a visualização da deformação\n"
+            ),
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=20)
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)

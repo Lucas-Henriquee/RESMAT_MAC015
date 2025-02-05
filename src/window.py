@@ -104,7 +104,6 @@ def create_main_screen_activity_02(window, frame):
     from activities.Activity_02.exercises.exercise_1 import exercise_1_ui
     from activities.Activity_02.exercises.exercise_2 import exercise_2_ui
     
-
     create_label(frame, "Resistência dos Materiais\n\nAtividade 02", 
                  ("Arial", 24, "bold"), "#2e3b4e", "#f0f0f0", pady=30)
 

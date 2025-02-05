@@ -73,8 +73,8 @@ class Node:
             )
 
     def draw_node_label(self, ax):
-        offset_x = 0.15
-        offset_y = 0.15
+        offset_x = 0.18
+        offset_y = 0.18
         label_x = self.x + offset_x
         label_y = self.y + offset_y
 
