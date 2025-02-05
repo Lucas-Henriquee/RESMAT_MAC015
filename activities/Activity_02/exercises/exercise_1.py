@@ -553,11 +553,11 @@ def exercise_1_ui(frame, window):
         def analisar_funcao_por_partes(func_por_partes):
             forces.clear()
             for funcao, intervalo in func_por_partes:
-                load = Load("function", function=funcao, interval=intervalo)
+                load = Load(load_type="function", load_function=funcao, interval=intervalo)
                 forces.append(load)
         
         def analisar_funcao_unica(funcao):
-            load = Load("function", function=funcao, interval=(0, lenght))
+            load = Load(load_type="function", load_function=funcao, interval=(0, lenght))
             forces.clear()
             forces.append(load)
 
@@ -578,12 +578,12 @@ def exercise_1_ui(frame, window):
                         intervalo = eval(intervalo)  # Convertendo para tuple
                         func_por_partes.append((funcao, intervalo))
                     messagebox.showinfo("Verificada", f"Função foi verificada com sucesso!")
-                    analisar_funcao_por_partes(func_por_partes, 'x')
+                    analisar_funcao_por_partes(func_por_partes)
                     
                 else:
                     # Função única
                     funcao = sp.sympify(entrada)
-                    analisar_funcao_unica(funcao, 'x')
+                    analisar_funcao_unica(funcao)
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao processar a função:\n{e}")
 
@@ -614,31 +614,21 @@ def exercise_1_ui(frame, window):
             height=2,
         ).pack(side = "right", padx=20)
 
-    def calculate_efforts(length, support_type, supports, forces):
+    def calculate_efforts(length, support_type, supports, forces, results):
         x = sp.Symbol('x')
-        C1, C2 = sp.symbols('C1 C2')
-        V = 0
-
+        # {100, (0, 1.5); 200, (1.5, 3)}
+        V = results["F1_y"]
         if forces[0].load_type == "pontual":
             for force in forces:
-                V += sp.Piecewise((0, x < force.position), (force.value, x >= force.position))
+                V -= sp.Piecewise((force.value, x >= force.position), (0, True))
         elif forces[0].load_type == "function":
-            q = sp.Piecewise(*[(force.function, sp.And(x >= force.interval[0], x <= force.interval[1])) for force in forces])
-            V = sp.integrate(-q, x) + sp.symbols('C1')
-        M = sp.integrate(V, x) + sp.symbols('C2')
+            for force in forces:
+                V -= sp.Piecewise((force.load_function, (x >= force.interval[0]) & (x < force.interval[1])), (0, True))
         
-        C1, C2 = sp.symbols('C1 C2')
+        V = sp.sympify(V)
 
-        if support_type == "biapoiada":
-            eq1 = sp.Eq(M.subs(x, 0), 0)  
-            eq2 = sp.Eq(M.subs(x, length), 0)  
-        elif support_type == "engastada":
-            eq1 = sp.Eq(V.subs(x, 0), 0)  
-            eq2 = sp.Eq(M.subs(x, 0), 0)  
-  
-        sol = sp.solve([eq1, eq2], (C1, C2))
-        V = V.subs(sol)
-        M = M.subs(sol)
+        M = results["M_A"] - sp.integrate(V, x)
+        M = sp.sympify(M)
 
         V_func = sp.lambdify(x, sp.simplify(V), "numpy")
         M_func = sp.lambdify(x, sp.simplify(M), "numpy")
@@ -647,8 +637,6 @@ def exercise_1_ui(frame, window):
             'V': V_func,
             'M': M_func,
         }
-
-        print(results)
 
         display_results(results, length)
                 
@@ -669,6 +657,7 @@ def exercise_1_ui(frame, window):
                 'F1_x': 0.0, 
                 'F1_y': sum_forces_y, 
                 'M_A': sum_moments,  
+                "F2": 0.0,
             }
 
         else:
@@ -700,44 +689,13 @@ def exercise_1_ui(frame, window):
                 'F1_x': float(solution.get(F1_x, 0)),
                 'F1_y': float(solution.get(F1_y, 0)),
                 'F2': float(solution.get(F2, 0)),
+                "M_A": 0.0,
             }
-        calculate_efforts(length, support_type, supports, forces)
+        calculate_efforts(length, support_type, supports, forces, results)
 
 
     def display_results(solution, lenght):
         clear_frame(frame)
-
-        solution = {str(key): value for key, value in solution.items()}
-
-        fig, (ax1, ax2) = plt.subplots(1, 2)
-
-        canvas = FigureCanvasTkAgg(fig, master=frame)
-        canvas_widget = canvas.get_tk_widget()
-        canvas_widget.pack(fill=tk.BOTH, expand=True)
-
-        x_vals = np.linspace(0, lenght, 400)
-        V_vals = solution["V"](x_vals)
-        M_vals = solution["M"](x_vals)
-
-        print(M_vals)
-
-        ax1.plot(x_vals, V_vals, label="Esforço Cortante (V)", color='b')
-        ax1.set_title("Diagrama de Esforço Cortante")
-        ax1.set_xlabel("Posição (m)")
-        ax1.set_ylabel("Cortante (kN)")
-        ax1.grid(True)
-        ax1.legend()
-        
-        # Segundo gráfico: Momento Fletor
-        ax2.plot(x_vals, M_vals, label="Momento Fletor (M)", color='r')
-        ax2.set_title("Diagrama de Momento Fletor")
-        ax2.set_xlabel("Posição (m)")
-        ax2.set_ylabel("Momento (kNm)")
-        ax2.grid(True)
-        ax2.legend()
-
-        canvas.draw()
-
 
         Label(
             frame,
@@ -745,18 +703,40 @@ def exercise_1_ui(frame, window):
             font=("Arial", 26, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
-        ).pack(pady=20)
+        ).pack(pady=20, side="top")
+        try:
+            solution = {str(key): value for key, value in solution.items()}
 
-        result_label = Label(
-            frame,
+            fig, (ax1, ax2) = plt.subplots(1, 2)
+
+            canvas = FigureCanvasTkAgg(fig, master=frame)
+            canvas_widget = canvas.get_tk_widget()
+            canvas_widget.pack(fill=tk.BOTH, expand=True)
+
+            x_vals = np.linspace(0, lenght, 400)
+            V_vals = solution["V"](x_vals)
+            M_vals = solution["M"](x_vals)
+
+            ax1.plot(x_vals, V_vals, label="Esforço Cortante (V)", color='b')
+            ax1.set_title("Diagrama de Esforço Cortante")
+            ax1.set_xlabel("Posição (m)")
+            ax1.set_ylabel("Cortante (kN)")
+            ax1.grid(True)
+            ax1.legend()
             
-            font=("Courier", 18),
-            bg="#2e3b4e",
-            fg="#f0f0f0",
-            justify="left",
-            anchor="w",
-        )
-        result_label.pack(pady=20, padx=20)
+            # Segundo gráfico: Momento Fletor
+            ax2.plot(x_vals, M_vals, label="Momento Fletor (M)", color='r')
+            ax2.set_title("Diagrama de Momento Fletor")
+            ax2.set_xlabel("Posição (m)")
+            ax2.set_ylabel("Momento (kNm)")
+            ax2.grid(True)
+            ax2.legend()
+
+            canvas.draw()
+        except Exception as e:
+            print(f"Erro em display_results: {e}")
+            messagebox.showerror("Erro", f"Erro ao exibir os resultados: {e}")
+        
 
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20)

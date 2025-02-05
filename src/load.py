@@ -32,8 +32,8 @@ class Load:
     def calculate_value_and_position(self):
         x = sp.Symbol('x')
         if self.load_type == 'function':
-            forca = sp.integrate(self.load_function, x)
-            informacao = sp.integrate(self.load_function * x, x)
+            forca = sp.integrate(self.load_function, (x, self.interval[0], self.interval[1]))
+            informacao = sp.integrate(self.load_function * x, (x, self.interval[0], self.interval[1]))
             x_barra = informacao / forca
             self.value = forca
             self.position = x_barra
