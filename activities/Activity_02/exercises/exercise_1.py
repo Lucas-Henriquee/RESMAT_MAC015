@@ -623,7 +623,7 @@ def exercise_1_ui(frame, window):
                 V -= sp.Piecewise((force.value, x >= force.position), (0, True))
         elif forces[0].load_type == "function":
             for force in forces:
-                V -= sp.Piecewise((sp.integrate(force.load_function, x), (x >= force.interval[0]) & (x < force.interval[1])), (0, True))
+                V -= sp.Piecewise((sp.integrate(force.load_function, x), (x >= force.interval[0]) & (x <= force.interval[1])), (0, True))
         
         V = sp.sympify(V)
 
