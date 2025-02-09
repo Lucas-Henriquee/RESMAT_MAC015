@@ -233,8 +233,8 @@ def information_2_ui(frame, window):
     Label(
         frame,
         text=(
-            "- Imagem 1 (Exercício 1): Retirada da Internet.\n"
-            "- Imagem 2 (Exercício 2): Retiradas da Internet.\n"
+            "- Imagem 1 (Exercício 1): Retiradas da Internet.\n"
+            "- Imagem 2 (Exercício 2): Retirada da Internet.\n"
         ),
         font=("Arial", 16),
         bg="#2e3b4e",

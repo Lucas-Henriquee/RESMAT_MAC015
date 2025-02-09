@@ -1,5 +1,5 @@
 from src.all_imports import *
-from src.util import clear_frame, confirm_exit_to_main
+from src.util import clear_frame, confirm_exit_to_main, get_absolute_path
 from src.window import create_main_screen_activity_02
 from src.node import NodeManager
 from src.support import SupportManager
@@ -96,14 +96,17 @@ def exercise_2_ui(frame, window):
             justify="left",
         ).pack(pady=20)
 
+        img_path = get_absolute_path("activities/Activity_02/assets/exercise_2.png")
+
         try:
-            img = Image.open("activities/Activity_02/assets/exercise_2.png") 
-            img = img.resize((600, 300), Image.Resampling.LANCZOS) 
+            img = Image.open(img_path)
+            img = img.resize((600, 300), Image.Resampling.LANCZOS)
             img = ImageTk.PhotoImage(img)
 
             img_label = Label(frame, image=img, bg="#2e3b4e")
-            img_label.image = img  
+            img_label.image = img
             img_label.pack(pady=20)
+
         except Exception as e:
             print(f"Erro ao carregar a imagem: {e}")
             Label(

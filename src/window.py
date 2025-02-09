@@ -3,7 +3,7 @@ from .util import clear_frame, center_window, exit_program, create_label, create
 from .credits import credits_ui, information_1_ui, information_2_ui, information_3_ui
 
 def configure_window(window):
-    window.title("RESMAT - Atividade 01")
+    window.title("Resistência dos Materiais (MAC-015)")
     center_window(window)  
     window.configure(bg="#2e3b4e")
 
