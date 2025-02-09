@@ -34,7 +34,7 @@ O relatório detalhado desta atividade está disponível aqui:
 1. **Cálculo de Esforços Internos em Vigas**
    - **Descrição:** Calcula os diagramas de **Momento Fletor (M(x))** e **Força Cortante (V(x))** para vigas isostáticas.
    - **Parâmetros:** Tipo de viga, posição dos apoios e carregamentos.
-   - **Saída:** Equações e gráficos dos diagramas de esforço.
+   - **Saída:** Gráficos dos diagramas de esforço.
 
 2. **Deformações em Treliças Planas Isostáticas**
    - **Descrição:** Determina os deslocamentos nodais e o alongamento das barras usando o **Princípio do Trabalho Virtual (PTV)**.
@@ -106,4 +106,4 @@ Para facilitar a execução, foi gerado um **executável** que pode ser rodado n
 
 ## 📚 Resistência dos Materiais
 **Disciplina:** Resistência dos Materiais (MAC-015) - UFJF  
-**Período:** 2025/1  
+**Período:** 2024/3  
