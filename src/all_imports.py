@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageTk
 
 import sys
+import os
 
 from math import cos, sin, radians, sqrt, atan2, degrees
 import numpy as np

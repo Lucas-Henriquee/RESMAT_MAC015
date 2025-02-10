@@ -1,6 +1,6 @@
 from src.all_imports import *
 from src.window import create_main_screen_activity_01
-from src.util import clear_frame, confirm_exit_to_main
+from src.util import clear_frame, confirm_exit_to_main, get_absolute_path
 
 def exercise_2_ui(frame, window):
 
@@ -37,12 +37,15 @@ def exercise_2_ui(frame, window):
         image_frame = Frame(frame, bg="#2e3b4e")
         image_frame.pack(pady=20)
 
+        img_path_1 = get_absolute_path("activities/Activity_01/assets/exercise_2.1.png")
+        img_path_2 = get_absolute_path("activities/Activity_01/assets/exercise_2.2.png")
+        
         try:
-            img1 = Image.open("activities/Activity_01/assets/exercise_2.1.png")
+            img1 = Image.open(img_path_1)
             img1 = img1.resize((400, 180), Image.Resampling.LANCZOS)
             img1 = ImageTk.PhotoImage(img1)
 
-            img2 = Image.open("activities/Activity_01/assets/exercise_2.2.png")
+            img2 = Image.open(img_path_2)
             img2 = img2.resize((400, 180), Image.Resampling.LANCZOS)
             img2 = ImageTk.PhotoImage(img2)
 

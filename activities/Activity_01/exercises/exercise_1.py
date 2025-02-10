@@ -1,5 +1,5 @@
 from src.all_imports import *
-from src.util import clear_frame, confirm_exit_to_main
+from src.util import clear_frame, confirm_exit_to_main, get_absolute_path
 from src.window import create_main_screen_activity_01
 from src.force import Force, calculate_resultant, draw_resultant
 
@@ -34,8 +34,10 @@ def exercise_1_ui(frame, window):
         justify="left",
     ).pack(pady=20)
 
+    img_path = get_absolute_path("activities/Activity_01/assets/exercise_1.png")
+    
     try:
-        img = Image.open("activities/Activity_01/assets/exercise_1.png") 
+        img = Image.open(img_path) 
         img = img.resize((600, 300), Image.Resampling.LANCZOS) 
         img = ImageTk.PhotoImage(img)
         img_label = Label(frame, image=img, bg="#2e3b4e")

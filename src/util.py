@@ -51,3 +51,11 @@ def create_button(frame, text, font, bg, fg, command, width, height, pady=None):
     )
     button.pack(pady=pady)
     return button
+
+def get_absolute_path(relative_path):
+    if getattr(sys, "frozen", False):  
+        base_dir = sys._MEIPASS      # PyInstaller
+    else: 
+        base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))  #Python
+
+    return os.path.join(base_dir, relative_path)

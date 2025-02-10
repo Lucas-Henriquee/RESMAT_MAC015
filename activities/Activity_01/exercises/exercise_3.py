@@ -1,5 +1,5 @@
 from src.all_imports import *
-from src.util import clear_frame, confirm_exit_to_main
+from src.util import clear_frame, confirm_exit_to_main, get_absolute_path
 from src.window import create_main_screen_activity_01
 from src.node import NodeManager
 from src.support import SupportManager
@@ -43,8 +43,10 @@ def exercise_3_ui(frame, window):
             justify="left",
         ).pack(pady=20)
 
+        img_path = get_absolute_path("activities/Activity_01/assets/exercise_3.png") 
+
         try:
-            img = Image.open("activities/Activity_01/assets/exercise_3.png") 
+            img = Image.open(img_path) 
             img = img.resize((600, 300), Image.Resampling.LANCZOS) 
             img = ImageTk.PhotoImage(img)
 
@@ -580,7 +582,7 @@ def exercise_3_ui(frame, window):
             bg="#4caf50",
             fg="white",
             cursor="hand2",
-            command=lambda: add_force()
+            command=lambda: check_supports()
         ).pack(side="left", padx=10)
 
         Button(
@@ -592,6 +594,17 @@ def exercise_3_ui(frame, window):
             cursor="hand2",
             command=lambda: start_2()
         ).pack(side="left", padx=10)
+
+    def check_supports():
+        support_counts = {1: 0, 2: 0}
+
+        for support in support_manager.supports:
+            support_counts[support.support_type] += 1
+
+        if support_counts[1] == 3 or (support_counts[1] == 1 and support_counts[2] == 1):
+            add_force()
+        else:
+            messagebox.showerror("Erro", "Você precisa inserir 3 apoios de 1º gênero ou 1 de 1º gênero e 1 de 2º gênero antes de avançar.")
 
     def save_support(node, entry_type):
         try:
