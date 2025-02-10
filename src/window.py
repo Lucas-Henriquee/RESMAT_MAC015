@@ -174,7 +174,7 @@ def create_main_screen_activity_03(window, frame):
 
     create_button(
         frame, "Informações", 
-        ("Arial", 16, "bold"), "#616161", "white", lambda: information_1_ui(frame, window),
+        ("Arial", 16, "bold"), "#616161", "white", lambda: information_3_ui(frame, window),
         button_width, 2, pady=button_spacing
     )
 

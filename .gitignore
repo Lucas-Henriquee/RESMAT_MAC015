@@ -1,7 +1,7 @@
 */.vscode/*
 /build/*
-*/dist/*
-**/__pycache__/
+dist/icon.ico
+__pycache__/
 *Atividades_RESMAT.spec
 auto_runner.py
 build.bat

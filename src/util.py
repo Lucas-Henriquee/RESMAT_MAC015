@@ -21,9 +21,9 @@ def confirm_exit_to_main(window, frame, screen):
     from .window import create_main_screen_activity_02
     from .window import create_main_screen_activity_03
     
-    messagebox.askyesno("Confirmação", "Deseja voltar ao Menu? Todas as alterações serão perdidas.")
+    answer = messagebox.askyesno("Confirmação", "Deseja voltar ao Menu? Todas as alterações serão perdidas.")
 
-    if(messagebox.askyesno):
+    if(answer):
         if screen == 1:
             create_main_screen_activity_01(window, frame)
         
