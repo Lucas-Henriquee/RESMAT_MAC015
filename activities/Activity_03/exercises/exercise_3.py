@@ -1,6 +1,6 @@
 from src.all_imports import *
 from src.window import create_main_screen_activity_03
-from src.util import clear_frame, confirm_exit_to_main
+from src.util import clear_frame, confirm_exit_to_main, get_absolute_path
 from src.load import Load
 
 def exercise_3_ui(frame, window):
@@ -10,19 +10,18 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 1: Análise de Esforços em uma Viga",
+            text="Exercício 1: Análise de Tensão de cisalhamento",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
         ).pack(pady=20)
 
         explanation1 = (
-            "Este exercício aborda a análise de vigas apoiadas. Existem dois tipos principais de vigas que você pode "
-            "encontrar:\n\n"
-            "Vigas Biapoiadas:\n"
-            "- Contêm dois apoios: um apoio fixo (de primeiro gênero) e um apoio móvel (de segundo gênero).\n\n"
-            "Vigas Engastadas:\n"
-            "- Possuem um engaste em uma extremidade, que restringe todas as translações e rotações.\n\n"
+            "Este exercício aborda a análise de tensão de cisalhamento e ângulo de torção \n"
+            "de um eixo, seja ele:\n\n"
+            "- Prismático\n"
+            "- Composto por partes\n"
+            "- Com seção transversal circular variável\n\n"
         )
 
         Label(
@@ -39,19 +38,31 @@ def exercise_3_ui(frame, window):
         image_frame.pack(pady=20)
 
         try:
-            img1 = Image.open("activities/Activity_01/assets/exercise_2.1.png")
+            img1_path = get_absolute_path("activities/Activity_03/assets/exercise_3.1.png")
+            img2_path = get_absolute_path("activities/Activity_03/assets/exercise_3.2.png")
+            img3_path = get_absolute_path("activities/Activity_03/assets/exercise_3.3.png")
+
+            img1 = Image.open(img1_path)
             img1 = img1.resize((400, 180), Image.Resampling.LANCZOS)
             img1 = ImageTk.PhotoImage(img1)
 
-            img2 = Image.open("activities/Activity_01/assets/exercise_2.2.png")
+            img2 = Image.open(img2_path)
             img2 = img2.resize((400, 180), Image.Resampling.LANCZOS)
             img2 = ImageTk.PhotoImage(img2)
+
+            img3 = Image.open(img3_path)
+            img3 = img2.resize((400, 180), Image.Resampling.LANCZOS)
+            img3 = ImageTk.PhotoImage(img2)
 
             img_label1 = Label(image_frame, image=img1, bg="#2e3b4e")
             img_label1.image = img1
             img_label1.pack(side="left", padx=20)
 
             img_label2 = Label(image_frame, image=img2, bg="#2e3b4e")
+            img_label2.image = img2
+            img_label2.pack(side="left", padx=20) 
+
+            img_label2 = Label(image_frame, image=img3, bg="#2e3b4e")
             img_label2.image = img2
             img_label2.pack(side="left", padx=20) 
 
@@ -66,7 +77,7 @@ def exercise_3_ui(frame, window):
             ).pack(pady=20)
 
         button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(pady=20)
+        button_frame.pack(pady=20, side="bottom")
 
         Button(
             button_frame,
