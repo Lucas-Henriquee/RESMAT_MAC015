@@ -10,14 +10,14 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 1: Análise de Tensão de cisalhamento",
+            text="Exercício 3: Análise de Tensão de Cisalhamento",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
         ).pack(pady=20)
 
         explanation1 = (
-            "Este exercício aborda a análise de tensão de cisalhamento e ângulo de torção \n"
+            "Este exercício aborda a análise de tensão de Cisalhamento e ângulo de torção \n"
             "de um eixo, seja ele:\n\n"
             "- Prismático\n"
             "- Composto por partes\n"
@@ -42,17 +42,19 @@ def exercise_3_ui(frame, window):
             img2_path = get_absolute_path("activities/Activity_03/assets/exercise_3.2.png")
             img3_path = get_absolute_path("activities/Activity_03/assets/exercise_3.3.png")
 
+            #TODO: colocar legendas
+
             img1 = Image.open(img1_path)
-            img1 = img1.resize((400, 180), Image.Resampling.LANCZOS)
+            img1 = img1.resize((300, 180), Image.Resampling.LANCZOS)
             img1 = ImageTk.PhotoImage(img1)
 
             img2 = Image.open(img2_path)
-            img2 = img2.resize((400, 180), Image.Resampling.LANCZOS)
+            img2 = img2.resize((300, 180), Image.Resampling.LANCZOS)
             img2 = ImageTk.PhotoImage(img2)
 
             img3 = Image.open(img3_path)
-            img3 = img2.resize((400, 180), Image.Resampling.LANCZOS)
-            img3 = ImageTk.PhotoImage(img2)
+            img3 = img3.resize((300, 180), Image.Resampling.LANCZOS)
+            img3 = ImageTk.PhotoImage(img3)
 
             img_label1 = Label(image_frame, image=img1, bg="#2e3b4e")
             img_label1.image = img1
@@ -62,9 +64,9 @@ def exercise_3_ui(frame, window):
             img_label2.image = img2
             img_label2.pack(side="left", padx=20) 
 
-            img_label2 = Label(image_frame, image=img3, bg="#2e3b4e")
-            img_label2.image = img2
-            img_label2.pack(side="left", padx=20) 
+            img_label3 = Label(image_frame, image=img3, bg="#2e3b4e")
+            img_label3.image = img3
+            img_label3.pack(side="left", padx=20) 
 
         except Exception as e:
             print(f"Erro ao carregar a imagem: {e}")
@@ -113,7 +115,7 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 1: Análise de Esforços em uma Viga",
+            text="Exercício 3: Análise de Tensão de Cisalhamento",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -129,9 +131,14 @@ def exercise_3_ui(frame, window):
 
         explanation2 = (
             "Para configurar o problema, siga estas etapas:\n\n"
-            "1. Preencha o tamanho da viga\n\n"
-            "2. Escolha o tipo de apoio na viga: Biapoiada ou Engastada\n\n"
-            "3. Definir a função de carregamento ou o carregamento pontual\n\n"
+            "1. Preencha quantas partes o eixo terá\n"
+            "  - Se um eixo tiver parte cheia e parte oca, considere cada parte como um eixo separado\n\n"
+            "2. Para cada eixo:\n"
+            "  - Definir o comprimento do eixo\n"
+            "  - Definir o diametro externo ou função do diametro externo\n"
+            "  - Definir o diametro interno ou função do diametro interno(0 se for cheio)\n"
+            "  - Definir o torque na extremidade direita do eixo\n"
+            "  - Selecionar o material do eixo\n\n"
             )
 
         Label(
@@ -145,7 +152,7 @@ def exercise_3_ui(frame, window):
         ).pack(pady=20)
 
         button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(pady=20)
+        button_frame.pack(pady=20, side="bottom")
 
         Button(button_frame,
             text="Iniciar",
@@ -175,7 +182,7 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 1: Análise de Esforços em uma Viga",
+            text="Exercício 3: Análise de Tensão de Cisalhamento",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -183,92 +190,34 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Configuração da Viga",
+            text="Configuração do Eixo",
             font=("Arial", 24, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
         ).pack(pady=20)
 
-        frame_lenght = Frame(frame, bg="#2e3b4e")
-        frame_lenght.pack(pady=10)
+        frame_eixos = Frame(frame, bg="#2e3b4e")
+        frame_eixos.pack(pady=10)
 
-        explanation_lenght = (
-            "Preencha o tamanho da viga em metros.\n\n"
-            "Largura (m): "
+        explanation_eixos = (
+            "Preencha quantos eixos terão\n\n"
+            "Eixos: "
         )
 
         Label(
-            frame_lenght,
-            text=explanation_lenght,
+            frame_eixos,
+            text=explanation_eixos,
             font=("Arial", 16),
             bg="#2e3b4e",
             fg="#f0f0f0",
             justify="center",
         ).pack(pady=5)
 
-        entry_lenght = Entry(frame_lenght, font=("Arial", 16), width=15, justify="center")
-        entry_lenght.pack(pady=5)
-
-        explanation_support_type = "\n\nTipo de Apoio:"
-        Label(
-            frame,
-            text=explanation_support_type,
-            font=("Arial", 16),
-            bg="#2e3b4e",
-            fg="#f0f0f0",
-            justify="center",
-        ).pack(pady=20)
-
-        entry_type = StringVar()
-
-        frame_entry_type = Frame(frame, bg="#2e3b4e")
-        frame_entry_type.pack(pady=10)
-
-        button_angle = Radiobutton(
-            frame_entry_type, 
-            text="engastada", 
-            font=("Arial", 20), 
-            cursor="hand2", 
-            variable=entry_type, 
-            value="engastada",
-            bg="#2e3b4e", 
-            fg="white", 
-            selectcolor="#2e3b4e", 
-            command=lambda: update_support_type("engastada")
-        )
-        button_angle.pack(side="left", padx=20)
-
-        button_coord = Radiobutton(
-            frame_entry_type, 
-            text="biapoiada", 
-            font=("Arial", 20), 
-            cursor="hand2", 
-            variable=entry_type, 
-            value="biapoiada",
-            bg="#2e3b4e", 
-            fg="#f0f0f0", 
-            selectcolor="#2e3b4e", 
-            command=lambda: update_support_type("biapoiada")
-        )
-        button_coord.pack(side="left", padx=20)
-
-        def update_support_type(support_type):
-            entry_type.set(support_type)
-            if support_type == "engastada":
-                button_angle.config(bg="#ffa500", fg="white")
-                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
-            elif support_type == "biapoiada":
-                button_coord.config(bg="#ffa500", fg="white")
-                button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
-            else:
-                button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
-                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
-        
-        frame_gap = Frame(frame, bg="#2e3b4e")
-        frame_gap.pack(pady=20)
+        entry_eixos = Entry(frame_eixos, font=("Arial", 16), width=15, justify="center")
+        entry_eixos.pack(pady=5)
 
         button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(pady=20)
+        button_frame.pack(pady=20, side="bottom")
 
         Button(
             button_frame,
@@ -276,7 +225,7 @@ def exercise_3_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: info_apoio(entry_lenght.get(), entry_type.get()),
+            command=lambda: info_eixos(entry_eixos.get()),
             cursor="hand2",
             width=15,
             height=2,
@@ -294,24 +243,23 @@ def exercise_3_ui(frame, window):
             height=2,
         ).pack(side="right", padx=20)
 
-    def info_apoio(length, support_type):
+    def info_eixos(num_eixos):
         clear_frame(frame)
 
-        if support_type != "engastada" and support_type != "biapoiada":
-            start_3()
-            messagebox.showerror("Erro", "Selecione um tipo de apoio válido")
-            return
-
         try:
-            length = float(length)
+            eixos = int(num_eixos)
+            if eixos <= 0:
+                start_3()
+                messagebox.showerror("Erro", "Insira um valor válido para a quantidade de eixos")
+                return
         except ValueError:
             start_3()
-            messagebox.showerror("Erro", "Insira um valor válido para o comprimento da viga")
+            messagebox.showerror("Erro", "Insira um valor válido para a quantidade de eixos")
             return
 
         Label(
             frame,
-            text="Exercício 1: Análise de Esforços em uma Viga",
+            text="Exercício 3: Análise de Tensão de Cisalhamento",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -424,7 +372,7 @@ def exercise_3_ui(frame, window):
 
         Label(
             frame,
-            text="Exercício 1: Análise de Esforços em uma Viga",
+            text="Exercício 3: Análise de Tensão de Cisalhamento",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0",
