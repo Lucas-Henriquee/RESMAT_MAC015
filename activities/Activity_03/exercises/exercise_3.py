@@ -1,3 +1,4 @@
+from src.eixo import Eixo
 from src.all_imports import *
 from src.window import create_main_screen_activity_03
 from src.util import clear_frame, confirm_exit_to_main, get_absolute_path
@@ -216,8 +217,24 @@ def exercise_3_ui(frame, window):
         entry_eixos = Entry(frame_eixos, font=("Arial", 16), width=15, justify="center")
         entry_eixos.pack(pady=5)
 
+        explanation_info_eixos = (
+            "A ordem de inserção dos eixos é importante para que o exercício fique correto\n"
+            "Devido a isso, escolhemos que o eixo 1 seja o da extremidade livre e o último o da extremidade engastada\n\n"
+        )
+
+        Label(
+            frame,
+            text=explanation_info_eixos,
+            font=("Arial", 16),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            justify="left",
+        ).pack(pady=20)
+
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(pady=20, side="bottom")
+
+        eixos = []
 
         Button(
             button_frame,
@@ -225,7 +242,7 @@ def exercise_3_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: info_eixos(entry_eixos.get()),
+            command=lambda: info_eixos(entry_eixos.get(), 0, eixos),
             cursor="hand2",
             width=15,
             height=2,
@@ -243,12 +260,12 @@ def exercise_3_ui(frame, window):
             height=2,
         ).pack(side="right", padx=20)
 
-    def info_eixos(num_eixos):
+    def info_eixos(num_eixos, done, eixos):
         clear_frame(frame)
 
         try:
-            eixos = int(num_eixos)
-            if eixos <= 0:
+            num_eixos = int(num_eixos)
+            if num_eixos <= 0:
                 start_3()
                 messagebox.showerror("Erro", "Insira um valor válido para a quantidade de eixos")
                 return
@@ -265,14 +282,13 @@ def exercise_3_ui(frame, window):
             fg="#f0f0f0",
         ).pack(pady=20)
 
-        explanation_position = (
-            "Para esse exercício, a viga inicia no ponto 0 do eixo x\n\n"
-            "Sabendo disso, preencha as informações dos apoios\n\n"
+        explanation_lenght = (
+            f"Insira o comprimento do eixo {done+1}"
         )
 
         Label(
             frame,
-            text=explanation_position,
+            text=explanation_lenght,
             font=("Arial", 18),
             bg="#2e3b4e",
             fg="#f0f0f0",
@@ -280,282 +296,87 @@ def exercise_3_ui(frame, window):
             justify="left",
         ).pack(pady=20)
 
-        if(support_type == "engastada"):
-            explanation_support = (
-                "O engaste da viga deve estar em uma extremidade, então insira ou 0\n "
-                "ou o valor de L para o apoio\n\n"
-            )
-        else:
-            explanation_support = (
-                "A viga é biapoiada, então insira valores entre 0 e L para os apoios\n"
-                "Lembre-se que os apoios devem estar em pontos diferentes\n\n"
-            )
-        
-        Label(
-            frame,
-            text=explanation_support,
-            font=("Arial", 16),
-            bg="#2e3b4e",
-            fg="#f0f0f0",
-            wraplength=800,
-            justify="left",
-        ).pack(pady=20)
+        entry_lenght = Entry(frame, font=("Arial", 16), width=15, justify="center")
+        entry_lenght.pack(pady=5)
 
-        if(support_type == "engastada"):
-            Label(frame, text="Posição do apoio (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-            entry_support = Entry(frame, font=("Arial", 16), width=15, justify="center")
-            entry_support.pack(pady=5)
-        else:
-            Label(frame, text="Posição do apoio de segundo gênero (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-            entry_support1 = Entry(frame, font=("Arial", 16), width=15, justify="center")
-            entry_support1.pack(pady=5)
-
-            Label(frame, text="Posição do apoio de primeiro gênero (m): ", font=("Arial", 16), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
-            entry_support2 = Entry(frame, font=("Arial", 16), width=15, justify="center")
-            entry_support2.pack(pady=5)
-        
-
-        frame_gap = Frame(frame, bg="#2e3b4e")
-        frame_gap.pack(pady=25)
-
-        button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(pady=20)
-
-        Button(
-            button_frame,
-            text="Iniciar",
-            font=("Arial", 18, "bold"),
-            bg="#4caf50",
-            fg="white",
-            command=lambda: info_forcas(length, support_type, [entry_support.get()] if support_type == "engastada" else [entry_support1.get(), entry_support2.get()]),
-            cursor="hand2",
-            width=15,
-            height=2,
-        ).pack(side = "left", padx=20)
-
-        Button(
-            button_frame,
-            text="Voltar",
-            font=("Arial", 18, "bold"),
-            bg="#d32f2f",
-            fg="white",
-            command=lambda: start_2(),
-            cursor="hand2",
-            width=15,
-            height=2,
-        ).pack(side = "right", padx=20)
-
-    def info_forcas(lenght, support_type, supports):
-        clear_frame(frame)
-
-        try:
-            if(support_type == "engastada"):
-                supports[0] = float(supports[0])
-                if (supports[0] == 0 or supports[0] == lenght):
-                    pass
-                else:
-                    info_apoio(lenght, support_type)
-                    messagebox.showerror("Erro", "Apoio engastado deve estar em uma extremidade da viga")
-                    return
-            else:
-                supports[0] = float(supports[0])
-                supports[1] = float(supports[1])
-                if(supports[0] == supports[1] or supports[0] < 0 or supports[1] > lenght or supports[0] > lenght or supports[1] < 0):
-                    info_apoio(lenght, support_type)
-                    messagebox.showerror("Erro", "Apoios biapoiados devem estar em pontos diferentes e entre 0 e L")
-                    return
-        except ValueError:
-            info_apoio(lenght, support_type)
-            messagebox.showerror("Erro", "Insira valores válidos para os apoios")
-
-        forces = []
-
-        Label(
-            frame,
-            text="Exercício 3: Análise de Tensão de Cisalhamento",
-            font=("Arial", 28, "bold"),
-            bg="#2e3b4e",
-            fg="#f0f0f0",
-        ).pack(pady=20)
-
-        explanation_forces = (
-            "Insira as informações de carregamento na viga. O carregamento pode ser pontual (força concentrada em uma posição) ou distribuído (uma função ao longo do comprimento da viga). \n\n"
+        explanation_eradius = (
+            f"Insira o raio externo do eixo {done+1}"
         )
 
         Label(
             frame,
-            text=explanation_forces,
-            font=("Arial", 16),
+            text=explanation_eradius,
+            font=("Arial", 18),
             bg="#2e3b4e",
             fg="#f0f0f0",
             wraplength=800,
             justify="left",
         ).pack(pady=20)
 
-        entry_type = StringVar()
+        entry_eradius = Entry(frame, font=("Arial", 16), width=15, justify="center")
+        entry_eradius.pack(pady=5)
 
-        def update_input_fields(*args):
-            frame_forca_pontual.pack_forget()
-            frame_forca_funcao.pack_forget()
-            if(entry_type.get() == "pontual"):
-                frame_forca_pontual.pack(pady=20)
-                button_angle.config(bg="#ffa500", fg="white")
-                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
-            elif(entry_type.get() == "funcao"):
-                frame_forca_funcao.pack(pady=20)
-                button_angle.config(bg="#2e3b4e", fg="white")
-                button_coord.config(bg="#ffa500", fg="#f0f0f0")
-            else:
-                button_angle.config(bg="#2e3b4e", fg="#f0f0f0")
-                button_coord.config(bg="#2e3b4e", fg="#f0f0f0")
+        explanation_iradius = (
+            f"Insira o raio interno do eixo {done+1}"
+        )
 
-        def create_func_and_pontual_frames():
-            frame_forca_pontual = Frame(frame, bg="#2e3b4e")
-            explanation_force = (
-                    "Força Pontual (N):"
-            )
-            Label(
-                frame_forca_pontual,
-                text=explanation_force,
-                font=("Arial", 16),
-                bg="#2e3b4e",
-                fg="#f0f0f0",
-                justify="center",
-            ).pack(pady=20)
-            entry_force = Entry(frame_forca_pontual, font=("Arial", 16), width=15, justify="center")
-            entry_force.pack(pady=20)
+        Label(
+            frame,
+            text=explanation_iradius,
+            font=("Arial", 18),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            wraplength=800,
+            justify="left",
+        ).pack(pady=20)
 
-            explanation_position = (
-                "Posição da força (m):"
-            )
-            Label(
-                frame_forca_pontual,
-                text=explanation_position,
-                font=("Arial", 16),
-                bg="#2e3b4e",
-                fg="#f0f0f0",
-                justify="center",
-            ).pack(pady=20)
-            entry_position = Entry(frame_forca_pontual, font=("Arial", 16), width=15, justify="center")
-            entry_position.pack(pady=20)
-            add_button = Button(
-                frame_forca_pontual,
-                text="Adicionar Força",
-                font=("Arial", 18, "bold"),
-                bg="#4caf50",
-                fg="white",
-                command = lambda: clean_entrys_and_add_force(),
-                cursor="hand2",
-                width=15,
-                height=2,
-            )
-            add_button.pack(pady=20)
+        entry_iradius = Entry(frame, font=("Arial", 16), width=15, justify="center")
+        entry_iradius.pack(pady=5)
 
-            def clean_entrys_and_add_force(*args):
-                try:
-                    intensity = float(entry_force.get())
-                    position = float(entry_position.get())
-                    if position < 0 or position > lenght:
-                        messagebox.showerror("Erro", "Posição da força deve estar entre 0 e L")
-                        return
-                    load = Load("pontual", value=intensity, position=position)
-                    entry_force.delete(0, 'end')
-                    entry_position.delete(0, 'end')
-                    forces.append(load)
-                    messagebox.showinfo("Força Adicionada", f"Força de {intensity} N na posição {position} m foi adicionada com sucesso!")
-                except ValueError:
-                    messagebox.showerror("Erro", "Insira valores válidos para a força e a posição")  
+        explanation_torcao = (
+            f"Insira a torção na extremidade do eixo {done+1}"
+        )
 
-            frame_forca_funcao = Frame(frame, bg="#2e3b4e")
-            explanation_force = (
-                "Escreva a função que descreve a força em função de x: \n\n"
-                "Para funções por partes, use a seguinte notação: {f(x), (a, b); g(x), (c, d); ...}\n\n"
-                "Onde f(x) é a função, (a, b) é o intervalo de x onde a função é válida\n\n"
-                "Exemplo: {x**2, (0, 2); 2*x, (2, 4)}"
-            )
-            Label(
-                frame_forca_funcao,
-                text=explanation_force,
-                font=("Arial", 16),
-                bg="#2e3b4e",
-                fg="#f0f0f0",
-                justify="center",
-            ).pack(pady=20)
-            verify_button = Button(
-                frame_forca_funcao,
-                text="Analisar Função",
-                font=("Arial", 18, "bold"),
-                bg="#4caf50",
-                fg="white",
-                command = lambda: analisar_funcao(),
-                cursor="hand2",
-                width=15,
-                height=2,
-            )
-            verify_button.pack(side="bottom",pady=5)
-            entry_force_function = Entry(frame_forca_funcao, font=("Arial", 16), width=15, justify="center")
-            entry_force_function.pack(pady=20)
-            return frame_forca_pontual, frame_forca_funcao, entry_force, entry_position, entry_force_function
+        Label(
+            frame,
+            text=explanation_torcao,
+            font=("Arial", 18),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            wraplength=800,
+            justify="left",
+        ).pack(pady=20)
 
-        frame_forca_pontual, frame_forca_funcao, entry_force, entry_position, entry_force_function = create_func_and_pontual_frames()
-        frame_entry_type = Frame(frame, bg="#2e3b4e")
-        frame_entry_type.pack(pady=10)
+        entry_torcao = Entry(frame, font=("Arial", 16), width=15, justify="center")
+        entry_torcao.pack(pady=5)
 
-        button_angle = Radiobutton(frame_entry_type, text="Pontual", font=("Arial", 20), cursor="hand2", variable=entry_type, value="pontual",bg="#4caf50", fg="white", selectcolor="#2e3b4e",)
-        button_angle.pack(side="left", padx=20)
-        button_coord = Radiobutton(frame_entry_type, text="Função", font=("Arial", 20), cursor="hand2", variable=entry_type, value="funcao",bg="#2e3b4e", fg="#f0f0f0", selectcolor="#2e3b4e",)
-        button_coord.pack(side="left", padx=20)
+        explanation_G = (
+            f"Insira o módulo de cisalhamento do eixo {done+1}"
+        )
 
-        entry_type.trace_add("write", update_input_fields)
-        update_input_fields()
+        Label(
+            frame,
+            text=explanation_G,
+            font=("Arial", 18),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+            wraplength=800,
+            justify="left",
+        ).pack(pady=20)
 
-        def analisar_funcao_por_partes(func_por_partes):
-            forces.clear()
-            for funcao, intervalo in func_por_partes:
-                load = Load(load_type="function", load_function=funcao, interval=intervalo)
-                forces.append(load)
-        
-        def analisar_funcao_unica(funcao):
-            load = Load(load_type="function", load_function=funcao, interval=(0, lenght))
-            forces.clear()
-            forces.append(load)
-
-        def analisar_funcao(event=None):
-            entrada = entry_force_function.get().strip()  # Obter texto do Entry
-            try:
-                # Processar a entrada com sympy
-                #{100*x, (0,3); 300, (3,5); 400, (5,10)}
-                #{x**2, (-oo, 0; x, (0, oo)}
-                if "{" in entrada and "}" in entrada:
-                    # Função por partes (usando uma notação específica)
-                    partes = entrada[1:-1].split(";")
-                    func_por_partes = []
-                    for parte in partes:
-                        funcao, intervalo = parte.split(",", 1)
-                        funcao = sp.sympify(funcao.strip())
-                        intervalo = intervalo.strip()
-                        intervalo = eval(intervalo)  # Convertendo para tuple
-                        func_por_partes.append((funcao, intervalo))
-                    messagebox.showinfo("Verificada", f"Função foi verificada com sucesso!")
-                    analisar_funcao_por_partes(func_por_partes)
-                    
-                else:
-                    # Função única
-                    funcao = sp.sympify(entrada)
-                    analisar_funcao_unica(funcao)
-            except Exception as e:
-                messagebox.showerror("Erro", f"Erro ao processar a função:\n{e}")
+        entry_G = Entry(frame, font=("Arial", 16), width=15, justify="center")
+        entry_G.pack(pady=5)
 
         button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(side="bottom",pady=20)
+        button_frame.pack(pady=20, side="bottom")
 
         Button(
             button_frame,
-            text=("Calcular Resultado"),
+            text="Próximo" if done < num_eixos - 1 else "Finalizar",
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: calculate_support_relations(lenght, support_type, supports, forces),
+            command=lambda: save_and_next(eixos, done, entry_lenght.get(), entry_eradius.get(), entry_iradius.get(), entry_G.get(), entry_torcao.get(), num_eixos),
             cursor="hand2",
             width=15,
             height=2,
@@ -567,93 +388,54 @@ def exercise_3_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: start_2(),
+            command=lambda: start_3(),
             cursor="hand2",
             width=15,
             height=2,
         ).pack(side = "right", padx=20)
 
-    def calculate_efforts(length, support_type, supports, forces, results):
-        x = sp.Symbol('x')
-        # {100, (0, 1.5); 200, (1.5, 3)}
-        V = results["F1_y"]
-        if forces[0].load_type == "pontual":
-            for force in forces:
-                V -= sp.Piecewise((force.value, x >= force.position), (0, True))
-        elif forces[0].load_type == "function":
-            for force in forces:
-                V -= sp.Piecewise((sp.integrate(force.load_function, x), (x >= force.interval[0]) & (x <= force.interval[1])), (0, True))
-        
-        V = sp.sympify(V)
+    def save_and_next(eixos, done, lenght, extern_radius, intern_radius, G, Torcao, num_eixos):
+        try:
+            lenght = float(lenght)
+            extern_radius = float(extern_radius)
+            intern_radius = float(intern_radius)
+            G = float(G)
+            Torcao = float(Torcao)
+        except ValueError:
+            info_eixos(num_eixos, done, eixos)
+            messagebox.showerror("Erro", "Os valores devem ser numéricos")
+            return
 
-        M = results["M_A"] - sp.integrate(V, x)
-        M = sp.sympify(M)
+        if lenght <= 0:
+            info_eixos(eixos, done)
+            messagebox.showerror("Erro", "O comprimento deve ser maior que zero")
+            return
+        if extern_radius <= 0:
+            info_eixos(eixos, done)
+            messagebox.showerror("Erro", "O raio externo deve ser maior que zero")
+            return
+        if intern_radius < 0:
+            info_eixos(eixos, done)
+            messagebox.showerror("Erro", "O raio interno deve ser maior que zero")
+            return
+        if G <= 0:
+            info_eixos(eixos, done)
+            messagebox.showerror("Erro", "O módulo de elasticidade deve ser maior que zero")
+            return
+        torcao = Torcao
+        if len(eixos) > 0:
+            for eixo in eixos:
+                torcao += eixo.Torcao
 
-        V_func = sp.lambdify(x, sp.simplify(V), "numpy")
-        M_func = sp.lambdify(x, sp.simplify(M), "numpy")
+        eixos.append(Eixo(lenght, extern_radius, intern_radius, G, torcao))
 
-        results = {
-            'V': V_func,
-            'M': M_func,
-        }
-
-        display_results(results, length)
-                
-
-    def calculate_resultant(length, support_type, supports, forces):
-
-        if support_type == "engastada":
-            sum_forces_x = 0  
-            sum_forces_y = 0
-            sum_moments = 0
-
-            for force in forces:
-                moment = force.value * (supports[0] - force.position) 
-                sum_moments += moment
-                sum_forces_y += force.value
-
-            results = {
-                'F1_x': 0.0, 
-                'F1_y': sum_forces_y, 
-                'M_A': sum_moments,  
-                "F2": 0.0,
-            }
-
+        if done < num_eixos - 1:
+            info_eixos(num_eixos, done + 1, eixos)
         else:
-            sum_forces_y = 0
-            sum_moments = 0
-
-            for force in forces:
-                moment = force.value * (force.position - supports[0])  
-                sum_moments += moment
-                sum_forces_y += force.value
-
-            F1_x = sp.Symbol('F1_x')
-            F1_y = sp.Symbol('F1_y')
-            F2 = sp.Symbol('F2')
-
-            system = [
-                F2 * (supports[1] - supports[0]) - sum_moments,  
-                F1_y + F2 - sum_forces_y,  
-                F1_x,  
-            ]
-
-            try:
-                solution = sp.solve(system, (F1_x, F1_y, F2))
-            except Exception as e:
-                print(f"Erro ao resolver o sistema: {e}")
-                raise e
-
-            results = {
-                'F1_x': float(solution.get(F1_x, 0)),
-                'F1_y': float(solution.get(F1_y, 0)),
-                'F2': float(solution.get(F2, 0)),
-                "M_A": 0.0,
-            }
-        calculate_efforts(length, support_type, supports, forces, results)
+            display_results(eixos)
 
 
-    def display_results(solution, lenght):
+    def display_results(eixos):
         clear_frame(frame)
 
         Label(
@@ -663,42 +445,44 @@ def exercise_3_ui(frame, window):
             bg="#2e3b4e",
             fg="#f0f0f0",
         ).pack(pady=20, side="top")
-        try:
-            solution = {str(key): value for key, value in solution.items()}
 
-            fig, (ax1, ax2) = plt.subplots(1, 2)
+        angulo_total = 0
+        for i, eixo in enumerate(eixos):
+            angulo_total += eixo.angle
+            Label(
+                frame,
+                text=f"Eixo {i+1}",
+                font=("Arial", 24, "bold"),
+                bg="#2e3b4e",
+                fg="#f0f0f0",
+            ).pack(pady=20, side="top")
 
-            canvas = FigureCanvasTkAgg(fig, master=frame)
-            canvas_widget = canvas.get_tk_widget()
-            canvas_widget.pack(fill=tk.BOTH, expand=True)
+            Label(
+                frame,
+                text=f"Torque Máximo: {eixo.t_max:.2f} Nm",
+                font=("Arial", 20),
+                bg="#2e3b4e",
+                fg="#f0f0f0",
+            ).pack(pady=10, side="top")
 
-            x_vals = np.linspace(0, lenght, 400)
-            V_vals = solution["V"](x_vals)
-            M_vals = solution["M"](x_vals)
-
-            ax1.plot(x_vals, V_vals, label="Esforço Cortante (V)", color='b')
-            ax1.set_title("Diagrama de Esforço Cortante")
-            ax1.set_xlabel("Posição (m)")
-            ax1.set_ylabel("Cortante (kN)")
-            ax1.grid(True)
-            ax1.legend()
-            
-            # Segundo gráfico: Momento Fletor
-            ax2.plot(x_vals, M_vals, label="Momento Fletor (M)", color='r')
-            ax2.set_title("Diagrama de Momento Fletor")
-            ax2.set_xlabel("Posição (m)")
-            ax2.set_ylabel("Momento (kNm)")
-            ax2.grid(True)
-            ax2.legend()
-
-            canvas.draw()
-        except Exception as e:
-            print(f"Erro em display_results: {e}")
-            messagebox.showerror("Erro", f"Erro ao exibir os resultados: {e}")
+            Label(
+                frame,
+                text=f"Ângulo de Torção: {eixo.angle:.4f} rad",
+                font=("Arial", 20),
+                bg="#2e3b4e",
+                fg="#f0f0f0",
+            ).pack(pady=10, side="top")
+        Label(
+            frame,
+            text=f"Ângulo de Torção Total: {angulo_total:.4f} rad",
+            font=("Arial", 24, "bold"),
+            bg="#2e3b4e",
+            fg="#f0f0f0",
+        ).pack(pady=20, side="top")
         
 
         button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(pady=20)
+        button_frame.pack(pady=20, side="bottom")
 
         Button(
             button_frame,
@@ -706,18 +490,10 @@ def exercise_3_ui(frame, window):
             font=("Arial", 20, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: confirm_exit_to_main(window, frame, 2),
+            command=lambda: confirm_exit_to_main(window, frame, 3),
             cursor="hand2",
             width=20,
             height=2,
         ).pack(side="bottom", padx=20)
-
-
-    def calculate_support_relations(lenght, support_type, supports, forces):
-        try:
-            calculate_resultant(lenght, support_type, supports, forces)
-        except Exception as e:
-            print(f"Erro em calculate_support_relations: {e}")
-            messagebox.showerror("Erro", f"Erro ao calcular os apoios: {e}")
 
     start_1()
