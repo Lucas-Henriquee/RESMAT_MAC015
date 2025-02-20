@@ -1,6 +1,7 @@
 matplotlib
 tkintertable
 sympy
+shapely
 numpy
 pillow
 setuptools

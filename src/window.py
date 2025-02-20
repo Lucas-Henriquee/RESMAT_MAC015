@@ -155,19 +155,19 @@ def create_main_screen_activity_03(window, frame):
     button_spacing = 15  
 
     create_button(
-        frame, "Exercício 1 - Momento de Inércia", 
+        frame, "Exercício 1 - Inércia de Seções Compostas", 
         ("Arial", 16, "bold"), "#4caf50", "white", lambda: exercise_1_ui(frame, window),
         button_width, 2, pady=button_spacing
     )
 
     create_button(
-        frame, "Exercício 2 - Tensões máximas de tração e compressão", #TODO: Rever nomes
+        frame, "Exercício 2 - Tensões de Flexão Máxima", 
         ("Arial", 16, "bold"), "#2196f3", "white", lambda: exercise_2_ui(frame, window),
         button_width, 2, pady=button_spacing
     )
 
     create_button(
-        frame, "Exercício 3 - Tensões máximas de cisalhamento", #TODO: Rever nomes
+        frame, "Exercício 3 - Torção e Cisalhamento", 
         ("Arial", 16, "bold"), "#ff9800", "white", lambda: exercise_3_ui(frame, window),
         button_width, 2, pady=button_spacing
     )
