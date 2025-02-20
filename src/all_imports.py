@@ -10,6 +10,8 @@ from matplotlib.patches import Circle, Polygon
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 
+from shapely.geometry import Point, Polygon, LineString, MultiPolygon
+
 from PIL import Image, ImageTk
 
 import sys

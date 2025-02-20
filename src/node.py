@@ -2,10 +2,11 @@ from .all_imports import *
 from .force import Force
 
 class Node:
-    def __init__(self, name, x, y):
+    def __init__(self, name, x, y, radius=None):
         self.name = name
         self.x = x
         self.y = y
+        self.radius = radius
         self.x_deformed = x  
         self.y_deformed = y  
         self.forces = []
@@ -92,13 +93,13 @@ class NodeManager:
     def generate_node_name(self):
         return chr(65 + self.counter)
 
-    def add_node(self, x, y):
+    def add_node(self, x, y, radius=None):
         for node in self.nodes:
             if node.x == x and node.y == y:
                 raise ValueError(f"Nó com coordenadas ({x}, {y}) já existe.")
         
         name = self.generate_node_name()
-        self.nodes.append(Node(name, x, y))
+        self.nodes.append(Node(name, x, y, radius))
         self.counter += 1
         return name
 
@@ -140,3 +141,9 @@ class NodeManager:
     def clear_nodes(self):
         self.nodes.clear()
         self.counter = 0
+
+    def get_node_by_coordinates(self, x, y):
+        for node in self.nodes:
+            if node.x == x and node.y == y:
+                return node
+        return None
