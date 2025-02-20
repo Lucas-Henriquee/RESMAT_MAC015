@@ -8,6 +8,7 @@ def calculate_moments(section: Section):
 
     I_x, I_y, I_xy = 0, 0, 0
     total_area = 0
+    cut_moments = []  
 
     def polygon_moments(coords):
         n = len(coords)
@@ -48,6 +49,9 @@ def calculate_moments(section: Section):
     I_xy += I_xy_main + area_main * x_bar_main * y_bar_main
     total_area += area_main
 
+    # print(f"\n[DEBUG] Figura Principal - Área: {area_main:.2f}, Centroide (x̄, ȳ) = ({x_bar_main:.2f}, {y_bar_main:.2f})")
+    # print(f"[DEBUG] Momentos de Inércia da Figura Principal: I_x = {I_x:.2f}, I_y = {I_y:.2f}, I_xy = {I_xy:.2f}\n")
+
     results = [
         f"Principal  |  Área: {area_main:.2f}  |  x̄: {x_bar_main:.2f}  |  ȳ: {y_bar_main:.2f}  |  "
         f"I_x: {I_x:.2f}  |  I_y: {I_y:.2f}  |  I_xy: {I_xy:.2f}"
@@ -64,14 +68,22 @@ def calculate_moments(section: Section):
                 x_bar_cut = cx
                 y_bar_cut = cy + (4 * r) / (3 * np.pi) 
 
-                I_xx_cut = (np.pi * r**4) / (8 if intersec_area < np.pi * r**2 else 4)
+                if intersec_area == np.pi * r**2:  
+                    I_xx_cut = (np.pi * r**4) / 4
+                else:  
+                    I_xx_cut = (np.pi * r**4) / 8  
+
                 I_yy_cut = I_xx_cut
+
                 I_xy_cut = 0  
 
-                I_x -= I_xx_cut + intersec_area * y_bar_cut**2
-                I_y -= I_yy_cut + intersec_area * x_bar_cut**2
-                I_xy -= I_xy_cut + intersec_area * x_bar_cut * y_bar_cut
+                I_x -= (I_xx_cut + intersec_area * y_bar_cut**2) if intersec_area > 0 else 0
+                I_y -= (I_yy_cut + intersec_area * x_bar_cut**2) if intersec_area > 0 else 0
+                I_xy -= (I_xy_cut + intersec_area * x_bar_cut * y_bar_cut) if intersec_area > 0 else 0
+
                 total_area -= intersec_area
+
+                cut_moments.append((intersec_area, x_bar_cut, y_bar_cut, I_xx_cut, I_yy_cut, I_xy_cut))
 
                 results.append(
                     f"Corte {idx}  |  Área: {-intersec_area:.2f}  |  x̄: {x_bar_cut:.2f}  |  ȳ: {y_bar_cut:.2f}  |  "
@@ -82,16 +94,6 @@ def calculate_moments(section: Section):
             cut_coords = [(node.x, node.y) for node in cut_figure]
 
             area_cut, x_bar_cut, y_bar_cut, I_xx_cut, I_yy_cut, I_xy_cut = polygon_moments(cut_coords)
-               
-            if len(cut_coords) == 3: 
-                x_bar_cut = sum(p[0] for p in cut_coords) / 3
-                y_bar_cut = sum(p[1] for p in cut_coords) / 3
-                I_xy_cut = (area_cut * x_bar_cut * y_bar_cut) / 2  
-
-            elif len(cut_coords) == 4: 
-                x_bar_cut = (cut_coords[0][0] + cut_coords[2][0]) / 2
-                y_bar_cut = (cut_coords[0][1] + cut_coords[2][1]) / 2
-                I_xy_cut = 0  
 
             if area_cut > 0:
                 I_x -= I_xx_cut + area_cut * y_bar_cut**2
@@ -99,25 +101,27 @@ def calculate_moments(section: Section):
                 I_xy -= I_xy_cut + area_cut * x_bar_cut * y_bar_cut
                 total_area -= area_cut
 
+                cut_moments.append((area_cut, x_bar_cut, y_bar_cut, I_xx_cut, I_yy_cut, I_xy_cut))
+
+                # print(f"[DEBUG] Corte {idx} - Área: {area_cut:.2f}, Centroide: ({x_bar_cut:.2f}, {y_bar_cut:.2f})")
+                # print(f"[DEBUG] Após corte {idx} - I_x: {I_x:.2f}, I_y: {I_y:.2f}, I_xy: {I_xy:.2f}")
+
+
                 results.append(
                     f"Corte {idx}  |  Área: {-area_cut:.2f}  |  x̄: {x_bar_cut:.2f}  |  ȳ: {y_bar_cut:.2f}  |  "
                     f"I_x: {I_x:.2f}  |  I_y: {I_y:.2f}  |  I_xy: {I_xy:.2f}"
                 )
 
     if total_area != 0:
-        x_bar_final = (
-            (area_main * x_bar_main) +
-            sum(-area_cut * x_bar_cut for cut_figure in section.cut_figures
-                for area_cut, x_bar_cut, _, _, _, _ in [polygon_moments([(node.x, node.y) for node in cut_figure])])
-        ) / total_area
-
-        y_bar_final = (
-            (area_main * y_bar_main) +
-            sum(-area_cut * y_bar_cut for cut_figure in section.cut_figures
-                for area_cut, _, y_bar_cut, _, _, _ in [polygon_moments([(node.x, node.y) for node in cut_figure])])
-        ) / total_area
+        x_bar_final = (area_main * x_bar_main - sum(area * x_bar for area, x_bar, _, _, _, _ in cut_moments)) / total_area
+        y_bar_final = (area_main * y_bar_main - sum(area * y_bar for area, _, y_bar, _, _, _ in cut_moments)) / total_area
     else:
         x_bar_final, y_bar_final = 0, 0  
+
+    # print(f"\n[DEBUG] ---- RESULTADOS FINAIS ----")
+    # print(f"[DEBUG] Centroide final: (x̄, ȳ) = ({x_bar_final:.2f}, {y_bar_final:.2f})")
+    # print(f"[DEBUG] Momentos finais: I_x = {I_x:.2f}, I_y = {I_y:.2f}, I_xy = {I_xy:.2f}")
+
 
     results.append(
         f"Total  |  Área: {total_area:.2f}  |  x̄: {x_bar_final:.2f}  |  ȳ: {y_bar_final:.2f}  |  "
