@@ -258,3 +258,6 @@ def information_2_ui(frame, window):
 
 def information_3_ui(frame, window):
     pass
+
+def information_4_ui(frame, window):
+    pass

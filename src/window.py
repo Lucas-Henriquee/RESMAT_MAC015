@@ -1,6 +1,6 @@
 from .all_imports import * 
 from .util import clear_frame, center_window, exit_program, create_label, create_button
-from .credits import credits_ui, information_1_ui, information_2_ui, information_3_ui
+from .credits import credits_ui, information_1_ui, information_2_ui, information_3_ui, information_4_ui
 
 def configure_window(window):
     window.title("Resistência dos Materiais (MAC-015)")
@@ -35,6 +35,13 @@ def create_main_screen(window, frame):
     create_button(
         frame, "Atividade 03", 
         ("Arial", 16, "bold"), "#ff9800", "white", lambda: create_main_screen_activity_03(window, frame),
+        button_width, 2, pady=button_spacing
+    )
+
+    create_button(
+        #TODO: trocar cor do botão
+        frame, "Atividade 04", 
+        ("Arial", 16, "bold"), "#ff9800", "white", lambda: create_main_screen_activity_04(window, frame),
         button_width, 2, pady=button_spacing
     )
 
@@ -175,6 +182,39 @@ def create_main_screen_activity_03(window, frame):
     create_button(
         frame, "Informações", 
         ("Arial", 16, "bold"), "#616161", "white", lambda: information_3_ui(frame, window),
+        button_width, 2, pady=button_spacing
+    )
+
+    create_button(
+        frame, "Menu Principal", 
+        ("Arial", 16, "bold"), "#d32f2f", "white", lambda: create_main_screen(window, frame),
+        button_width, 2, pady=button_spacing
+    )
+
+def create_main_screen_activity_04(window, frame):
+
+    clear_frame(frame)
+
+    from activities.Activity_04.exercises.exercise_1 import exercise_1_ui
+    
+    create_label(frame, "Resistência dos Materiais\n\nAtividade 04", 
+                 ("Arial", 24, "bold"), "#2e3b4e", "#f0f0f0", pady=30)
+
+    create_label(frame, "Selecione um exercício", 
+                 ("Arial", 18), "#2e3b4e", "#f0f0f0", pady=20)
+
+    button_width = 35  
+    button_spacing = 15  
+
+    create_button(
+        frame, "Exercício 1 - Esforços em vigas", 
+        ("Arial", 16, "bold"), "#4caf50", "white", lambda: exercise_1_ui(frame, window),
+        button_width, 2, pady=button_spacing
+    )
+
+    create_button(
+        frame, "Informações", 
+        ("Arial", 16, "bold"), "#616161", "white", lambda: information_4_ui(frame, window),
         button_width, 2, pady=button_spacing
     )
 
