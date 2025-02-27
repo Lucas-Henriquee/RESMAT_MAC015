@@ -7,6 +7,8 @@ from src.moment import calculate_moments
 
 def exercise_1_ui(frame, window):
 
+    section = Section()
+
     def start_1():
         clear_frame(frame)
 
@@ -716,7 +718,7 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: calculate_support_relations(lenght, support_type, supports, forces),
+            command=lambda: start_1_second_part(), #calculate_support_relations(lenght, support_type, supports, forces),
             cursor="hand2",
             width=15,
             height=2,
@@ -761,7 +763,6 @@ def exercise_1_ui(frame, window):
 
         display_results(results, length)
                 
-
     def calculate_resultant(length, support_type, supports, forces):
 
         if support_type == "engastada":
@@ -813,7 +814,6 @@ def exercise_1_ui(frame, window):
                 "M_A": 0.0,
             }
         calculate_efforts(length, support_type, supports, forces, results)
-
 
     def display_results(solution, lenght):
         clear_frame(frame)
@@ -874,7 +874,6 @@ def exercise_1_ui(frame, window):
             height=2,
         ).pack(side="bottom", padx=20)
 
-
     def calculate_support_relations(lenght, support_type, supports, forces):
         try:
             calculate_resultant(lenght, support_type, supports, forces)
@@ -882,23 +881,19 @@ def exercise_1_ui(frame, window):
             print(f"Erro em calculate_support_relations: {e}")
             messagebox.showerror("Erro", f"Erro ao calcular os apoios: {e}")
 
-    section = Section()
-
     def start_1_second_part():
         clear_frame(frame)
 
         Label(
             frame,
-            text="Exercício 1: Cálculo do Momento de Inércia de Seções",
+            text="Adicionando a seção transversal",
             font=("Arial", 28, "bold"),
             bg="#2e3b4e",
             fg="#f0f0f0"
         ).pack(pady=20)
 
         explanation1 = (
-            "Este exercício tem como objetivo determinar o momento de inércia e o produto de inércia de seções "
-            "compostas por figuras geométricas básicas, como retângulos, círculos e triângulos.\n\n"
-            "Etapas do exercício:\n"
+            "Etapas da inserção:\n"
             "- Definir a forma inicial: retângulo, círculo ou triângulo.\n"
             "- Realizar recortes sucessivos, utilizando as mesmas formas.\n"
             "- Calcular o momento de inércia em relação aos eixos centroidais.\n\n"
@@ -948,7 +943,7 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: start_2(),
+            command=lambda: start_2_second_part(),
             cursor="hand2",
             width=15,
             height=2,
@@ -965,10 +960,6 @@ def exercise_1_ui(frame, window):
             width=15,
             height=2,
         ).pack(side="right", padx=20)
-
-    def reset_all():
-        global forces  
-        forces = []  
 
     def start_2_second_part():
         reset_all()
@@ -1026,7 +1017,7 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: start_1(),
+            command=lambda: start_2(),
             cursor="hand2",
             width=15,
             height=2,
@@ -1378,7 +1369,6 @@ def exercise_1_ui(frame, window):
 
             except ValueError as e:
                 messagebox.showerror("Erro", "Por favor, insira apenas números válidos para as coordenadas.")
-
 
     def render_drawing():
         clear_frame(frame)

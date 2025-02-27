@@ -39,9 +39,8 @@ def create_main_screen(window, frame):
     )
 
     create_button(
-        #TODO: trocar cor do botão
         frame, "Atividade 04", 
-        ("Arial", 16, "bold"), "#ff9800", "white", lambda: create_main_screen_activity_04(window, frame),
+        ("Arial", 16, "bold"), "#9c27b0", "white", lambda: create_main_screen_activity_04(window, frame),
         button_width, 2, pady=button_spacing
     )
 
