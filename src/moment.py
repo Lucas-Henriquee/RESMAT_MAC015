@@ -49,14 +49,6 @@ def calculate_moments(section: Section):
     I_xy += I_xy_main + area_main * x_bar_main * y_bar_main
     total_area += area_main
 
-    # print(f"\n[DEBUG] Figura Principal - Área: {area_main:.2f}, Centroide (x̄, ȳ) = ({x_bar_main:.2f}, {y_bar_main:.2f})")
-    # print(f"[DEBUG] Momentos de Inércia da Figura Principal: I_x = {I_x:.2f}, I_y = {I_y:.2f}, I_xy = {I_xy:.2f}\n")
-
-    results = [
-        f"Principal  |  Área: {area_main:.2f}  |  x̄: {x_bar_main:.2f}  |  ȳ: {y_bar_main:.2f}  |  "
-        f"I_x: {I_x:.2f}  |  I_y: {I_y:.2f}  |  I_xy: {I_xy:.2f}"
-    ]
-
     for idx, cut_figure in enumerate(section.cut_figures, 1):
 
         if isinstance(cut_figure[0], Node) and getattr(cut_figure[0], "radius", None) is not None:
@@ -85,11 +77,6 @@ def calculate_moments(section: Section):
 
                 cut_moments.append((intersec_area, x_bar_cut, y_bar_cut, I_xx_cut, I_yy_cut, I_xy_cut))
 
-                results.append(
-                    f"Corte {idx}  |  Área: {-intersec_area:.2f}  |  x̄: {x_bar_cut:.2f}  |  ȳ: {y_bar_cut:.2f}  |  "
-                    f"I_x: {I_x:.2f}  |  I_y: {I_y:.2f}  |  I_xy: {I_xy:.2f}"
-                )
-
         else:
             cut_coords = [(node.x, node.y) for node in cut_figure]
 
@@ -103,31 +90,12 @@ def calculate_moments(section: Section):
 
                 cut_moments.append((area_cut, x_bar_cut, y_bar_cut, I_xx_cut, I_yy_cut, I_xy_cut))
 
-                # print(f"[DEBUG] Corte {idx} - Área: {area_cut:.2f}, Centroide: ({x_bar_cut:.2f}, {y_bar_cut:.2f})")
-                # print(f"[DEBUG] Após corte {idx} - I_x: {I_x:.2f}, I_y: {I_y:.2f}, I_xy: {I_xy:.2f}")
-
-
-                results.append(
-                    f"Corte {idx}  |  Área: {-area_cut:.2f}  |  x̄: {x_bar_cut:.2f}  |  ȳ: {y_bar_cut:.2f}  |  "
-                    f"I_x: {I_x:.2f}  |  I_y: {I_y:.2f}  |  I_xy: {I_xy:.2f}"
-                )
-
     if total_area != 0:
         x_bar_final = (area_main * x_bar_main - sum(area * x_bar for area, x_bar, _, _, _, _ in cut_moments)) / total_area
         y_bar_final = (area_main * y_bar_main - sum(area * y_bar for area, _, y_bar, _, _, _ in cut_moments)) / total_area
     else:
         x_bar_final, y_bar_final = 0, 0  
 
-    # print(f"\n[DEBUG] ---- RESULTADOS FINAIS ----")
-    # print(f"[DEBUG] Centroide final: (x̄, ȳ) = ({x_bar_final:.2f}, {y_bar_final:.2f})")
-    # print(f"[DEBUG] Momentos finais: I_x = {I_x:.2f}, I_y = {I_y:.2f}, I_xy = {I_xy:.2f}")
-
-
-    results.append(
-        f"Total  |  Área: {total_area:.2f}  |  x̄: {x_bar_final:.2f}  |  ȳ: {y_bar_final:.2f}  |  "
-        f"I_x: {I_x:.2f}  |  I_y: {I_y:.2f}  |  I_xy: {I_xy:.2f}"
-    )
-
-    results.append("* Todos os valores estão em unidades consistentes conforme o sistema de entrada.")
+    results = [I_x, I_y, I_xy, x_bar_final, y_bar_final]
 
     return results

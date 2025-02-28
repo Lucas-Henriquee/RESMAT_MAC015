@@ -20,6 +20,7 @@ def confirm_exit_to_main(window, frame, screen):
     from .window import create_main_screen_activity_01
     from .window import create_main_screen_activity_02
     from .window import create_main_screen_activity_03
+    from .window import create_main_screen_activity_04
     
     answer = messagebox.askyesno("Confirmação", "Deseja voltar ao Menu? Todas as alterações serão perdidas.")
 
@@ -32,6 +33,9 @@ def confirm_exit_to_main(window, frame, screen):
 
         elif screen == 3:
             create_main_screen_activity_03(window, frame)
+            
+        elif screen == 4:
+            create_main_screen_activity_04(window, frame)
 
 def configure_close_behavior(window):
     def on_close():

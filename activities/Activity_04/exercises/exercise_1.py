@@ -407,7 +407,7 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: info_forcas(length, support_type, [entry_support.get()] if support_type == "engastada" else [entry_support1.get(), entry_support2.get()]),
+            command=lambda: info_forcas(length, support_type, [entry_support.get()] if support_type == "engastada" else [entry_support1.get(), entry_support2.get()], elastic_module),
             cursor="hand2",
             width=15,
             height=2,
@@ -425,27 +425,27 @@ def exercise_1_ui(frame, window):
             height=2,
         ).pack(side = "right", padx=20)
 
-    def info_forcas(lenght, support_type, supports):
+    def info_forcas(length, support_type, supports, elastic_module):
         clear_frame(frame)
 
         try:
             if(support_type == "engastada"):
                 supports[0] = float(supports[0])
-                if (supports[0] == 0 or supports[0] == lenght):
+                if (supports[0] == 0 or supports[0] == length):
                     pass
                 else:
-                    info_apoio(lenght, support_type)
+                    info_apoio(length, support_type)
                     messagebox.showerror("Erro", "Apoio engastado deve estar em uma extremidade da viga")
                     return
             else:
                 supports[0] = float(supports[0])
                 supports[1] = float(supports[1])
-                if(supports[0] == supports[1] or supports[0] < 0 or supports[1] > lenght or supports[0] > lenght or supports[1] < 0):
-                    info_apoio(lenght, support_type)
+                if(supports[0] == supports[1] or supports[0] < 0 or supports[1] > length or supports[0] > length or supports[1] < 0):
+                    info_apoio(length, support_type)
                     messagebox.showerror("Erro", "Apoios biapoiados devem estar em pontos diferentes e entre 0 e L")
                     return
         except ValueError:
-            info_apoio(lenght, support_type)
+            info_apoio(length, support_type)
             messagebox.showerror("Erro", "Insira valores válidos para os apoios")
 
         forces = []
@@ -503,7 +503,7 @@ def exercise_1_ui(frame, window):
             try:
                 force = float(entry_force_pontual.get())
                 position = float(entry_position_pontual.get())
-                if position < 0 or position > lenght:
+                if position < 0 or position > length:
                     messagebox.showerror("Erro", "Posição do carregamento inválida")
                     return
                 forces.append(Load(load_type="pontual", value=force, position=position))
@@ -636,7 +636,7 @@ def exercise_1_ui(frame, window):
             try:
                 force = float(entry_momento.get())
                 position = float(entry_position_momento.get())
-                if position < 0 or position > lenght:
+                if position < 0 or position > length:
                     messagebox.showerror("Erro", "Posição do momento inválida")
                     return
                 forces.append(Load(load_type="momento", value=force, position=position))
@@ -673,7 +673,7 @@ def exercise_1_ui(frame, window):
                 forces.append(load)
         
         def analisar_funcao_unica(funcao):
-            load = Load(load_type="function", load_function=funcao, interval=(0, lenght))
+            load = Load(load_type="function", load_function=funcao, interval=(0, length))
             forces.clear()
             forces.append(load)
 
@@ -692,7 +692,7 @@ def exercise_1_ui(frame, window):
                         funcao = sp.sympify(funcao.strip())
                         intervalo = intervalo.strip()
                         intervalo = eval(intervalo)  # Convertendo para tuple
-                        if(intervalo[0] < 0 or intervalo[1] > lenght):
+                        if(intervalo[0] < 0 or intervalo[1] > length):
                             messagebox.showerror("Erro", "Intervalo de carregamento inválido")
                             func_por_partes.clear()
                             return
@@ -711,14 +711,13 @@ def exercise_1_ui(frame, window):
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(side="bottom",pady=20)
 
-        #TODO: A partir daqui deve ser mexido para ler os desenhos da seção transversal
         Button(
             button_frame,
             text=("Desenhar seção transversal"),
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: start_1_second_part(), #calculate_support_relations(lenght, support_type, supports, forces),
+            command=lambda: calculate_results(length, support_type, supports, forces, elastic_module, section), #start_1_second_part(length, support_type, supports, forces, elastic_module, section),
             cursor="hand2",
             width=15,
             height=2,
@@ -736,7 +735,7 @@ def exercise_1_ui(frame, window):
             height=2,
         ).pack(side = "right", padx=20)
 
-    def calculate_efforts(length, support_type, supports, forces, results):
+    def calculate_efforts(length, support_type, supports, forces, elastic_module, section, results):
 
         x = sp.Symbol('x')
         # {100, (0, 1.5); 200, (1.5, 3)}
@@ -753,17 +752,14 @@ def exercise_1_ui(frame, window):
         M = results["M_A"] - sp.integrate(V, x)
         M = sp.sympify(M)
 
-        V_func = sp.lambdify(x, sp.simplify(V), "numpy")
-        M_func = sp.lambdify(x, sp.simplify(M), "numpy")
-
         results = {
-            'V': V_func,
-            'M': M_func,
+            'V': V,
+            'M': M,
         }
 
-        display_results(results, length)
+        calculate_deflection(length, support_type, supports, forces, elastic_module, section, results)
                 
-    def calculate_resultant(length, support_type, supports, forces):
+    def calculate_resultant(length, support_type, supports, forces, elastic_module, section):
 
         if support_type == "engastada":
             sum_forces_x = 0  
@@ -782,14 +778,17 @@ def exercise_1_ui(frame, window):
                 "F2": 0.0,
             }
 
-        else:
+        elif support_type == "biapoiada":
             sum_forces_y = 0
             sum_moments = 0
 
             for force in forces:
-                moment = force.value * (force.position - supports[0])  
-                sum_moments += moment
-                sum_forces_y += force.value
+                if(force.load_type == "momento"):
+                    moment = force.value
+                else:
+                    moment = force.value * (force.position - supports[0])  
+                    sum_moments += moment
+                    sum_forces_y += force.value
 
             F1_x = sp.Symbol('F1_x')
             F1_y = sp.Symbol('F1_y')
@@ -813,9 +812,69 @@ def exercise_1_ui(frame, window):
                 'F2': float(solution.get(F2, 0)),
                 "M_A": 0.0,
             }
-        calculate_efforts(length, support_type, supports, forces, results)
+        calculate_efforts(length, support_type, supports, forces, elastic_module, section, results)
 
-    def display_results(solution, lenght):
+    def calculate_deflection(length, support_type, supports, forces, elastic_module, section, results):
+        # try:
+            # results_inertia = calculate_moments(section)
+            results_inertia = {
+                "I_x": 0.000005
+            }
+            x = sp.Symbol('x')
+            E = elastic_module
+            I = results_inertia["I_x"]
+            L = length
+
+            V = results["V"]
+            M = results["M"]
+
+            C1 = sp.Symbol('C1')
+            C2 = sp.Symbol('C2')
+
+            theta = sp.integrate((M / (E * I)), x) + C1
+            print(theta)
+            deflection = sp.integrate(theta, x) + C2
+            print(deflection)
+
+            if(support_type == "engastada"):
+                eq1 = sp.Eq(deflection.subs(x, supports[0]), 0)
+                eq2 = sp.Eq(theta.subs(x, supports[0]), 0)
+                eq3 = sp.Eq(V.subs(x, abs(supports[0]-L)), 0)
+                eq4 = sp.Eq(M.subs(x, abs(supports[0]-L)), 0)
+                sol = sp.solve([eq1, eq2, eq3, eq4], (C1, C2))
+            elif(support_type == "biapoiada"):
+                if supports[0] == 0 or supports[0] == length:
+                    eq1 = sp.Eq(M.subs(x, supports[0]), 0)
+                    eq2 = sp.Eq(deflection.subs(x, supports[0]), 0)
+                else:
+                    eq1 = sp.Eq(deflection.subs(x, supports[0]-0.00001), deflection.subs(x, supports[1]+0.00001))
+                    eq2 = sp.Eq(theta.subs(x, supports[0]-0.00001), theta.subs(x, supports[1]+0.00001))
+                if supports[1] == 0 or supports[1] == length:
+                    eq3 = sp.Eq(M.subs(x, supports[1]), 0)
+                    eq4 = sp.Eq(deflection.subs(x, supports[1]), 0)
+                else:
+                    eq3 = sp.Eq(deflection.subs(x, supports[1]-0.00001), deflection.subs(x, supports[1]+0.00001))
+                    eq3 = sp.Eq(theta.subs(x, supports[1]-0.00001), theta.subs(x, supports[1]+0.00001))
+                sol = sp.solve([eq1, eq2, eq3, eq4], (C1, C2))
+            print(sol)
+            theta = theta.subs(sol)
+            deflection = deflection.subs(sol)
+
+            deflection_func = sp.lambdify(x, deflection, "numpy")
+            theta_func = sp.lambdify(x, theta, "numpy")
+
+            results = {
+                "deflection": deflection_func,
+                "theta": theta_func,
+            }
+
+            display_results(results, length)
+        # except Exception as e:
+        #     print(f"Erro ao calcular a deflexão: {e}")
+        #     messagebox.showerror("Erro", f"Erro ao calcular a deflexão: {e}")
+
+
+    def display_results(solution, length):
         clear_frame(frame)
 
         Label(
@@ -834,22 +893,21 @@ def exercise_1_ui(frame, window):
             canvas_widget = canvas.get_tk_widget()
             canvas_widget.pack(fill=tk.BOTH, expand=True)
 
-            x_vals = np.linspace(0, lenght, 400)
-            V_vals = solution["V"](x_vals)
-            M_vals = solution["M"](x_vals)
+            x_vals = np.linspace(0, length, 400)
+            theta_vals = solution["theta"](x_vals)
+            deflection_vals = solution["deflection"](x_vals)
 
-            ax1.plot(x_vals, V_vals, label="Esforço Cortante (V)", color='b')
-            ax1.set_title("Diagrama de Esforço Cortante")
+            ax1.plot(x_vals, theta_vals, label="Inclinação (Theta)", color='b')
+            ax1.set_title("Diagrama de Inclinação da viga")
             ax1.set_xlabel("Posição (m)")
-            ax1.set_ylabel("Cortante (kN)")
+            ax1.set_ylabel("Inclinação (rad)")
             ax1.grid(True)
             ax1.legend()
             
-            # Segundo gráfico: Momento Fletor
-            ax2.plot(x_vals, M_vals, label="Momento Fletor (M)", color='r')
-            ax2.set_title("Diagrama de Momento Fletor")
+            ax2.plot(x_vals, deflection_vals, label="Deflexão (v)", color='r')
+            ax2.set_title("Diagrama de Deflexão da viga")
             ax2.set_xlabel("Posição (m)")
-            ax2.set_ylabel("Momento (kNm)")
+            ax2.set_ylabel("Y (m)")
             ax2.grid(True)
             ax2.legend()
 
@@ -868,21 +926,26 @@ def exercise_1_ui(frame, window):
             font=("Arial", 20, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: confirm_exit_to_main(window, frame, 2),
+            command=lambda: confirm_exit_to_main(window, frame, 4),
             cursor="hand2",
             width=20,
             height=2,
         ).pack(side="bottom", padx=20)
 
-    def calculate_support_relations(lenght, support_type, supports, forces):
-        try:
-            calculate_resultant(lenght, support_type, supports, forces)
-        except Exception as e:
-            print(f"Erro em calculate_support_relations: {e}")
-            messagebox.showerror("Erro", f"Erro ao calcular os apoios: {e}")
+    def calculate_support_relations(length, support_type, supports, forces, elastic_module, section):
+        # try:
+            calculate_resultant(length, support_type, supports, forces, elastic_module, section)
+        # except Exception as e:
+        #     print(f"Erro em calculate_support_relations: {e}")
+        #     messagebox.showerror("Erro", f"Erro ao calcular os apoios: {e}")
 
-    def start_1_second_part():
+    def start_1_second_part(length, support_type, supports, forces, elastic_module, section):
         clear_frame(frame)
+
+        if not forces:
+            messagebox.showerror("Erro", "Adicione pelo menos uma força para prosseguir")
+            info_forcas(length, support_type, supports, elastic_module)
+            return
 
         Label(
             frame,
@@ -943,7 +1006,7 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: start_2_second_part(),
+            command=lambda: start_2_second_part(length, support_type, supports, forces, elastic_module, section),
             cursor="hand2",
             width=15,
             height=2,
@@ -955,14 +1018,13 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: create_main_screen_activity_04(window, frame),
+            command=lambda: info_forcas(length, support_type, supports, elastic_module),
             cursor="hand2",
             width=15,
             height=2,
         ).pack(side="right", padx=20)
 
-    def start_2_second_part():
-        reset_all()
+    def start_2_second_part(length, support_type, supports, forces, elastic_module, section):
         clear_frame(frame)
 
         Label(
@@ -1005,7 +1067,7 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#4caf50",
             fg="white",
-            command=lambda: insert_figure(),
+            command=lambda: insert_figure(length, support_type, supports, forces, elastic_module, section),
             cursor="hand2",
             width=15,
             height=2,
@@ -1017,13 +1079,13 @@ def exercise_1_ui(frame, window):
             font=("Arial", 18, "bold"),
             bg="#d32f2f",
             fg="white",
-            command=lambda: start_2(),
+            command=lambda: info_forcas(length, support_type, supports, elastic_module),
             cursor="hand2",
             width=15,
             height=2,
         ).pack(side = "right", padx=20)
 
-    def insert_figure():
+    def insert_figure(length, support_type, supports, forces, elastic_module, section):
         clear_frame(frame)
 
         Label(
@@ -1112,10 +1174,10 @@ def exercise_1_ui(frame, window):
         button_frame = Frame(frame, bg="#2e3b4e")
         button_frame.pack(side="bottom", pady=20)
 
-        Button(button_frame, text="Avancar",font=("Arial", 20, "bold"), cursor="hand2", bg="#4caf50", fg="white", command=lambda: check_figure(), width=20, height=2).pack(side="left", padx=10)
+        Button(button_frame, text="Avancar",font=("Arial", 20, "bold"), cursor="hand2", bg="#4caf50", fg="white", command=lambda: check_figure(length, support_type, supports, forces, elastic_module, section), width=20, height=2).pack(side="left", padx=10)
         Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", cursor="hand2", command=start_2, width=20, height=2).pack(side="left", padx=10)
 
-        def check_figure():
+        def check_figure(length, support_type, supports, forces, elastic_module, section):
             figure = figure_type.get()
 
             if figure == "retangulo":
@@ -1130,7 +1192,7 @@ def exercise_1_ui(frame, window):
                     messagebox.showinfo("Verificação", "Foi inserido um Retângulo como Figura Principal.")
                     
                     section.create_main_figure("retangulo", (width, height))
-                    insert_cut_figure()
+                    insert_cut_figure(length, support_type, supports, forces, elastic_module, section)
 
                 except ValueError:
                     messagebox.showerror("Erro", "Por favor, insira valores numéricos válidos.")
@@ -1141,7 +1203,7 @@ def exercise_1_ui(frame, window):
                     height = float(entry_height_2.get())
                     section.create_main_figure("triangulo", (base, height))
                     messagebox.showinfo("Verificação", "Foi inserido um Triângulo como Figura Principal.")
-                    insert_cut_figure()
+                    insert_cut_figure(length, support_type, supports, forces, elastic_module, section)
 
                 except ValueError:
                     messagebox.showerror("Erro", "Por favor, insira valores numéricos válidos.")
@@ -1157,7 +1219,7 @@ def exercise_1_ui(frame, window):
                     messagebox.showinfo("Verificação", "Foi inserido um Círculo como Figura Principal.")
                     
                     section.create_main_figure("circulo", radius)
-                    insert_cut_figure()
+                    insert_cut_figure(length, support_type, supports, forces, elastic_module, section)
 
                 except ValueError:
                     messagebox.showerror("Erro", "Por favor, insira um valor numérico válido para o raio.")
@@ -1165,7 +1227,7 @@ def exercise_1_ui(frame, window):
             else:
                 messagebox.showerror("Erro", "Selecione uma figura válida antes de prosseguir.")
 
-    def insert_cut_figure():
+    def insert_cut_figure(length, support_type, supports, forces, elastic_module, section):
         clear_frame(frame)
 
         Label(frame, text="Agora vc vai pode escolher as figuras de corte", font=("Arial", 28), bg="#2e3b4e", fg="#f0f0f0").pack(pady=20)
@@ -1313,7 +1375,7 @@ def exercise_1_ui(frame, window):
             bg="#4caf50",
             fg="white",
             cursor="hand2",
-            command=lambda: show_results(section),
+            command=lambda: calculate_results(length, support_type, supports, forces, elastic_module, section),
             width=22, height=2 
         ).pack(side="left", padx=10, pady=5)
 
@@ -1394,44 +1456,7 @@ def exercise_1_ui(frame, window):
         Button(button_frame, text="Voltar", font=("Arial", 20, "bold"), bg="#d32f2f", fg="white", 
             cursor="hand2", command=insert_cut_figure, width=20, height=2).pack(side="left", padx=10)
         
-    def show_results(section):
-        clear_frame(frame)
-
-        Label(
-            frame,
-            text="Resultados dos Cálculos",
-            font=("Arial", 28, "bold"),
-            bg="#2e3b4e",
-            fg="#f0f0f0",
-        ).pack(pady=20)
-
-        results = calculate_moments(section)
-        results_text = "\n".join(results)
-        
-        result_label = Label(
-            frame,
-            text=results_text,
-            font=("Courier", 16),
-            bg="#2e3b4e",
-            fg="#f0f0f0",
-            justify="left",
-            anchor="w",
-        )
-        result_label.pack(pady=20)
-        
-        button_frame = Frame(frame, bg="#2e3b4e")
-        button_frame.pack(pady=20)
-        
-        Button(
-            button_frame,
-            text="Menu Principal",
-            font=("Arial", 18, "bold"),
-            bg="#d32f2f",
-            fg="white",
-            cursor="hand2",
-            command=lambda: confirm_exit_to_main(window, frame, 3),
-            width=15,
-            height=2,
-        ).pack(side="left", padx=20)
+    def calculate_results(length, support_type, supports, forces, elastic_module, section):
+        calculate_support_relations(length, support_type, supports, forces, elastic_module, section)
 
     start_1()
